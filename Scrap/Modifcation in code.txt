@@ -1,0 +1,78 @@
+Add below code in the server.js
+app.get('/healthz', async (req, res) => {
+  try {
+    console.log('healthz')
+    await sequelize.authenticate(); // Check the database connectivity
+    
+    res.status(200).set({
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'Pragma': 'no-cache',
+      'X-Content-Type-Options': 'nosniff'
+    }).json({ status: 'ok' });
+
+  } catch (error) {
+    console.error('Unable to connect to the database:', error);
+
+    res.status(503).set({
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'Pragma': 'no-cache',
+      'X-Content-Type-Options': 'nosniff'
+    }).json({ status: 'error', message: 'Unable to connect to the database' });
+  }
+});
+
+
+DeleteAssignment
+try {
+        // Retrieve ID from the request parameters
+        const { id } = req.query;
+
+         // Assuming req.user.id holds the authenticated user's ID
+         const userId = req.user.id;
+
+         // Retrieve the assignment to check the associated user
+         const assignment = await Assignment.findOne({
+             where: { id: id }
+         });
+ 
+         // Check if assignment exists
+         if (!assignment) {
+             return res.status(404).json({ message: 'Assignment not found' });
+         }
+ 
+         // Check if user is authorized to delete the assignment
+         if (assignment.userId !== userId) {
+             return res.status(403).json({ message: 'Forbidden: You do not have permission to delete this assignment' });
+         }
+         
+        // Attempt to delete the assignment with the given ID
+        const deletedRowCount = await Assignment.destroy({
+            where: { id: id }
+        });
+
+
+Update Assignment
+try {
+        // Extracting the ID from the request parameters
+        const { id } = req.query;
+        const userId = req.user.id;
+
+        // Validating the request body
+        const { name, points, num_of_attempts, deadline } = req.body;
+        console.log(deadline)
+
+        if (!name && !points && !num_of_attempts && !deadline) {
+            return res.status(400).json({ message: 'No fields to update were provided' });
+        }
+
+        // Finding the assignment to update
+        const assignment = await Assignment.findOne({ where: { id } });
+
+        if (!assignment) {
+            return res.status(404).json({ message: 'Assignment not found' });
+        }
+
+        
+        if (assignment.userId !== userId) {
+            return res.status(403).json({ message: 'Forbidden: You do not have permission to delete this assignment' });
+        }

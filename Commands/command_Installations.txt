@@ -1,0 +1,2 @@
+npm install express sequelize mysql2 body-parser bcrypt basic-auth
+npm install papaparse --save
