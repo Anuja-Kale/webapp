@@ -1,0 +1,58 @@
+name: Node.js Ashutosh_WorkFlow
+
+ 
+
+on:
+   pull_request:
+    branches:
+      - main
+
+ 
+
+jobs:
+  build:
+    name: Ashutosh_WorkFlow
+    runs-on: ubuntu-latest
+
+ 
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: 14
+
+ 
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Display .env file
+      run: |
+        echo "DB_USER=${{ secrets.DB_USER }}" >> .env
+        echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+
+
+    
+        echo "DB_NAME=TestDataBase1" >> .env
+        echo "PORT=8080" >> .env
+        cat .env
+
+    - name: configuremysql
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y curl
+        sudo systemctl start mysql
+        sudo systemctl status mysql
+        mysql -u ${{ secrets.DB_USER }} -p"${{ secrets.DB_PASSWORD }}" -e "CREATE DATABASE TestDataBase1;"
+
+    - name: Run Tests
+      run : npm test
+
+
+ 
+
+# checking CI command on PR - 1.2.3
