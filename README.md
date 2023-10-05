@@ -1,5 +1,4 @@
-#RESTful API REQUIREMENTS
-
+#RESTful API REQUIREMENTS<br> 
 Request/Response Payload: All API request/response payloads should be in JSON.
 UI: No UI should be implemented for the application.
 HTTP Status Codes: As a user, I expect all API calls to return with a proper HTTP status code.
