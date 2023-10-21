@@ -53,7 +53,7 @@ build {
   }
 
   provisioner "shell" {
-    script = "./setup-script.sh"
+    script = "./script.sh"
   }
 
   provisioner "shell" {
