@@ -10,6 +10,7 @@ jobs:
     name: Anuja_WorkFlow
     runs-on: ubuntu-latest
 
+    # Add the services section here
     services:
       mysql:
         image: mysql:5.7
@@ -41,20 +42,26 @@ jobs:
         cat .env
 
     - name: Wait for MySQL
-      run: |
-        until echo 'SELECT 1' | mysql -h mysql -P 3306 -u ${{ secrets.DB_USER }} -p"${{ secrets.DB_PASSWORD }}" &>/dev/null; do
-          echo "Waiting for MySQL..."
-          sleep 2
-        done
+      run: sleep 20
 
     - name: List services
-      run: docker ps
+      run: |
+        ping -c 4 mysql
+        docker ps
 
     - name: configuremysql
       run: |
         sudo apt-get update
         sudo apt-get install -y curl
+        # No need to start mysql service manually
+        # mysql -h 127.0.0.1 -P 3306 -u ${{ secrets.DB_USER }} -p"${{ secrets.DB_PASSWORD }}" -e "CREATE DATABASE IF NOT EXISTS TestDataBase1;"
+        # Use the provided command to connect to MySQL service
         mysql -h mysql -P 3306 -u ${{ secrets.DB_USER }} -p"${{ secrets.DB_PASSWORD }}" -e "CREATE DATABASE IF NOT EXISTS TestDataBase1;"
 
     - name: Run Tests
       run: npm test
+
+
+ 
+
+# checking CI command on PR - 1.2.3
