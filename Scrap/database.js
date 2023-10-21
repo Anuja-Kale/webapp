@@ -1,13 +1,12 @@
 const mysql = require('mysql2');
-const { Sequelize } = require('sequelize');
 const express = require('express');
 
 require('dotenv').config();
 
 const app = express();
 
-// mysql2 connection pool
 const pool = mysql.createPool({
+
     connectionLimit: 10,
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
@@ -18,21 +17,6 @@ const pool = mysql.createPool({
 pool.on('error', (err) => {
   console.error('Database connection error:', err);
 });
-
-// Sequelize configuration
-const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
-  host: process.env.DB_HOST,
-  dialect: 'mysql',
-  port: 3306,
-});
-
-sequelize.authenticate()
-  .then(() => {
-    console.log('Sequelize connection has been established successfully.');
-  })
-  .catch(err => {
-    console.error('Unable to connect to the database:', err);
-  });
 
 function checkHealth(req, res, next) {
   if (req.method !== 'GET') {
@@ -47,8 +31,10 @@ function checkHealth(req, res, next) {
 }
 
 function healthz(req, res) {
-  console.log(req.body);
-  if (Object.keys(req.query).length > 0 || (req.body && Object.keys(req.body).length > 0)) {
+//   if (Object.keys(req.query).length > 0) {
+    // if (Object.keys(req.query).length > 0 || Object.keys(req.body).length > 0) {
+    console.log(req.body)
+    if (Object.keys(req.query).length > 0 || ( req.body && Object.keys(req.body).length > 0))  {
     res.status(400).json();
     return;
   }
@@ -70,8 +56,8 @@ function healthz(req, res) {
   });
 }
 
+
 module.exports = {
   checkHealth,
-  healthz,
-  sequelize  // exporting sequelize if you need it elsewhere
+  healthz
 };
