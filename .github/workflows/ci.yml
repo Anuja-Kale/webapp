@@ -16,8 +16,10 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
           MYSQL_DATABASE: TestDataBase1
+          MYSQL_USER: ${{ secrets.DB_USER }}
+          MYSQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
         ports:
-          - 3306
+          - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=10
 
     steps:
@@ -32,6 +34,12 @@ jobs:
     - name: Install dependencies
       run: npm install
 
+    - name: Wait for MySQL to be ready
+      run: |
+        while ! nc -z localhost 3306; do
+          sleep 1
+        done
+
     - name: Display .env file
       run: |
         echo "DB_USER=${{ secrets.DB_USER }}" >> .env
@@ -40,23 +48,20 @@ jobs:
         echo "PORT=8080" >> .env
         cat .env
 
-    - name: Ensure MySQL is up
+    - name: Set up database user and permissions
       run: |
-        echo "Installing netcat..."
-        sudo apt-get update && sudo apt-get install -y netcat
-        echo "Waiting for MySQL..."
-        until nc -z -v -w30 mysql 3306; do
-          echo "Waiting for MySQL..."
-          sleep 1
-        done
-        echo "MySQL is up and running!"
+        mysql --host=localhost --port=3306 --user=${{ secrets.DB_USER }} --password=${{ secrets.DB_PASSWORD }} -e "GRANT ALL PRIVILEGES ON *.* TO '${{ secrets.DB_USER }}'@'%';"
+        mysql --host=localhost --port=3306 --user=${{ secrets.DB_USER }} --password=${{ secrets.DB_PASSWORD }} -e "FLUSH PRIVILEGES;"
 
-    - name: configuremysql
+    - name: Configure database
       run: |
-        sudo apt-get install -y curl
-        mysql -h mysql -P 3306 -u ${{ secrets.DB_USER }} -p"${{ secrets.DB_PASSWORD }}" -e "CREATE DATABASE IF NOT EXISTS TestDataBase1;"
+        mysql --host=localhost --port=3306 --user=${{ secrets.DB_USER }} --password=${{ secrets.DB_PASSWORD }} -e "CREATE DATABASE IF NOT EXISTS TestDataBase1;"
 
     - name: Run Tests
       run: npm test
-
-# checking CI command on PR - 1
+      env:
+        NODE_ENV: "test"
+        DB_HOST: "localhost"
+        DB_USERNAME: "${{ secrets.DB_USER }}"
+        DB_PASSWORD: "${{ secrets.DB_PASSWORD }}"
+        DB_DATABASE: "TestDataBase1"
