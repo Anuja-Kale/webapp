@@ -41,6 +41,14 @@ jobs:
         echo "PORT=8080" >> .env
         cat .env
 
+    - name: Wait for MySQL
+      run: sleep 20
+
+    - name: List services
+      run: |
+        ping -c 4 mysql
+        docker ps
+
     - name: configuremysql
       run: |
         sudo apt-get update
