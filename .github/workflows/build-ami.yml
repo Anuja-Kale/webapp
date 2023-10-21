@@ -19,7 +19,11 @@ jobs:
           sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
           sudo apt-get update && sudo apt-get install packer
 
-      # Initialize and run Packer. The specific commands depend on your Packer template configuration.
+      # Create webapp.zip from the current repository content
+      - name: Create webapp.zip
+        run: zip -r webapp.zip ./
+
+      # Initialize Packer
       - name: Initialize Packer
         run: |
           packer init pck.pkr.hcl  
