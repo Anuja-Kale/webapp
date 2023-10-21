@@ -20,7 +20,7 @@ jobs:
           sudo apt-get update && sudo apt-get install packer
 
       # Create webapp.zip from the current repository content
-      - name: Create webapp.zip
+      - name: Download webapp repository
         run: zip -r webapp.zip ./
 
       # Initialize Packer
