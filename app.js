@@ -80,19 +80,3 @@ app.get('/healthz', async (req, res) => {
 });
 
 module.exports = app;
-
-
-
-
-
-
-
-// Users.sync().then(result =>{
-//   console.log(result)
-// }).catch(error => {
-//   console.error("Error syncing User Model with database:", error);
-// });
-
-// app.listen(PORT, () => {
-//   console.log(`Server started on http://localhost:${PORT}`);
-// });
