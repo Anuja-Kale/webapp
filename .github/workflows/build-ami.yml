@@ -33,22 +33,25 @@ jobs:
           # mvn package
 
       # If your project's build generates artifacts, you can use this step to upload them
-      # in the 'actions/upload-artifact' step for use in subsequent steps or jobs.
       - name: Upload build artifact
         uses: actions/upload-artifact@v2
         with:
           name: my-artifact
           path: path/to/your/artifact
 
-      - name: Set up Packer 
-        uses: hashicorp/setup-packer@v1.0.0
-        with:
-          packer-version: '1.7.x'  # or the version you use
+      # Manual installation of Packer
+      - name: Install Packer
+        run: |
+          curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+          sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+          sudo apt-get update && sudo apt-get install packer
 
+      # Initialize and run Packer. The specific commands depend on your Packer template configuration.
       - name: Initialize Packer
         run: |
           packer init pck.pkr.hcl  
 
+      # Configuring AWS credentials for Packer to access AWS
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -56,8 +59,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
+      # Build AMI using Packer
       - name: Build AMI
-        run: packer build pck.pkr.hcl
-
-
-
+        run: |
+          packer build pck.pkr.hcl
