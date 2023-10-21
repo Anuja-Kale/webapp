@@ -4,8 +4,6 @@ on:
   pull_request:
     branches:
       - main
-    paths:
-      - 'pck.pkr.hcl'
 
 jobs:
   check-packer-template:
