@@ -1,12 +1,12 @@
 const express = require('express');
 const bodyParser = require('body-parser'); 
 const { checkHealth, healthz } = require('./Controller/healthController');
-const sequelize = require('./Models/datab');
+const sequelize = require('./Models/db');
 const loadUsersFromCSV = require('./Utils/csvLoaders');
 const processUsers = require('./Utils/processUsers');
 const Users = require('./Models/UserOLD');
-const User = require('./Models/user');
-const Assignment = require('./Models/assignment');
+const User = require('./Models/User');
+const Assignment = require('./Models/Assignment');
 const basicAuth = require('./Middleware/basicAuth');  
 const { createAssignment } = require('./Controller/assignmentController');
 const { getAssignmentById } = require('./Controller/getAssignmentById');
@@ -19,37 +19,43 @@ const app = express();
 const PORT = 8080;
 
 app.use(bodyParser.json()); 
-// app.use(bodyParser.raw({ type: '*/*', limit: '10mb' }));
-
-// app.all('/healthz', checkHealth);
-// app.get('/healthz', healthz);
 
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).json({ error: 'Internal Server Error' });
 });
 
-// app.get('/api/assignment',basicAuth,getAssignmentById)
 
 // Below API create the assignment
 app.post('/api/assignment', basicAuth, createAssignment);
 // app.get('/api/assignments', basicAuth,getAllAssignments);
 
 //Below API Gets the assignment based on the ID or fecthes all the assignment
-app.get('/api/assignment', basicAuth, (req, res, next) => {
-  if (req.query.id) {
-      console.log('by Id')
-      return getAssignmentById(req, res, next);
-  }
-  console.log('All Assignment')
-  return getAllAssignments(req, res, next);
+// Get a specific assignment by ID or all assignments if no ID is specified
+app.get('/api/assignment/:id?', basicAuth, (req, res, next) => {
+    if (req.params.id) {
+        console.log('Getting assignment by Id');
+        return getAssignmentById(req, res, next);
+    }
+    console.log('Getting all assignments');
+    return getAllAssignments(req, res, next);
 });
 
-//Below API delete all the assignment
-app.delete('/api/assignment', basicAuth, deleteAssignmentById);
 
-//Below API update the assignment
-app.put('/api/assignment', basicAuth, updateAssignmentById);
+// Delete an assignment by ID
+app.delete('/api/assignment/:id', basicAuth, (req, res, next) => {
+    // Here, your deleteAssignmentById function should be ready to handle the route parameter
+    // You should retrieve the ID with req.params.id in your controller
+    return deleteAssignmentById(req, res, next);
+});
+
+// Update an assignment by ID
+app.put('/api/assignment/:id', basicAuth, (req, res, next) => {
+    // Here, your updateAssignmentById function should be ready to handle the route parameter
+    // You should retrieve the ID with req.params.id in your controller
+    return updateAssignmentById(req, res, next);
+});
+
 
 app.get('/healthz', async (req, res) => {
   try {
@@ -75,27 +81,7 @@ app.get('/healthz', async (req, res) => {
 
 module.exports = app;
 
-// loadUsersFromCSV('../opt/users.csv')
-//     .then(users => {
-//         return processUsers(users);
-//     })
-//     .then(() => {
-//         console.log("Finished processing users.");
-        
-//         // Start the server after processing the users
-//         // app.listen(PORT, () => {
-//         //     console.log(`Server started on http://localhost:${PORT}`);
-//         // });
-//     })
-//     .catch(err => {
-//         console.error("Error:", err);
-//     });
 
-
-
-// User.hasMany(Assignment, { foreignKey: 'userId', as: 'assignments' });
-// Assignment.belongsTo(User, { foreignKey: 'userId', as: 'user' });
-// sequelize.sync();
 
 
 
