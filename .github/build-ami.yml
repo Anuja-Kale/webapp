@@ -1,0 +1,63 @@
+name: Build and Distribute AMI
+
+on:
+  push:
+    branches:
+      - main  # or replace with the branch you use
+
+env:
+  AWS_REGION: 'us-east-1'  # e.g., us-east-1
+  AWS_ACCOUNT_ID_DEV: '249440625046'
+  AWS_ACCOUNT_ID_DEMO: '057915486037'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # Assuming you have a step to run integration tests
+      - name: Run integration tests
+        run: |
+          # Add commands to run your integration tests
+          # Example: 
+          # npm install
+          # npm run test
+
+      # Build your application's artifact
+      - name: Build application artifact
+        run: |
+          # Add commands to build your project's artifact
+          # Example:
+          # mvn package
+
+      # If your project's build generates artifacts, you can use this step to upload them
+      # in the 'actions/upload-artifact' step for use in subsequent steps or jobs.
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: my-artifact
+          path: path/to/your/artifact
+
+      - name: Set up Packer
+        uses: hashicorp/setup-packer@v1
+        with:
+          packer-version: '1.7.x'  # or the version you use
+
+      - name: Initialize Packer
+        run: |
+          packer init pck.pkr.hcl  
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Build AMI
+        run: packer build pck.pkr.hcl
+
+
+
