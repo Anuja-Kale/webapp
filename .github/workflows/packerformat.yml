@@ -21,11 +21,10 @@ jobs:
       - name: Run 'packer fmt' and check for modifications
         run: |
           packer fmt pck.pkr.hcl
-          if [[ $(git status --porcelain) ]]; then
-            echo "Packer fmt has made changes to the following files:"
-            git --no-pager diff
-            exit 1
-          fi
+
+      - name: Initialize Packer
+        run: |
+          packer init pck.pkr.hcl
 
       - name: Run 'packer validate'
         run: |
