@@ -5,39 +5,12 @@ on:
     branches:
       - main  # or replace with the branch you use
 
-env:
-  AWS_REGION: 'us-east-1'  # e.g., us-east-1
-  AWS_ACCOUNT_ID_DEV: '249440625046'
-  AWS_ACCOUNT_ID_DEMO: '057915486037'
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-
-      # Assuming you have a step to run integration tests
-      - name: Run integration tests
-        run: |
-          # Add commands to run your integration tests
-          # Example: 
-          # npm install
-          # npm run test
-
-      # Build your application's artifact
-      - name: Build application artifact
-        run: |
-          # Add commands to build your project's artifact
-          # Example:
-          # mvn package
-
-      # If your project's build generates artifacts, you can use this step to upload them
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: my-artifact
-          path: path/to/your/artifact
 
       # Manual installation of Packer
       - name: Install Packer
@@ -53,13 +26,9 @@ jobs:
 
       # Configuring AWS credentials for Packer to access AWS
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
-
-      # Build AMI using Packer
-      - name: Build AMI
+        env:
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           packer build pck.pkr.hcl
