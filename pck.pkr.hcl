@@ -1,6 +1,6 @@
 variable "aws_profile" {
   type    = string
-  default = "dev"
+  default = "packer-profile"
 }
 
 variable "region" {
@@ -10,7 +10,7 @@ variable "region" {
 
 variable "source_ami_owner" {
   type    = string
-  default = "372558015288"
+  default = "249440625046"
 }
 
 variable "instance_type" {
@@ -41,7 +41,18 @@ source "amazon-ebs" "webapp" {
   region        = var.region
   source_ami    = "ami-06db4d78cb1d3bbf9"
   ssh_username  = var.ssh_username
-  ami_users     = ["822421370804"]
+  ami_users     = ["057915486037", "822421370804"]
+}
+
+locals { timestamp = regex_replace(timestamp(), "[- TZ:]", "") }
+
+packer {
+  required_plugins {
+    amazon = {
+      source  = "github.com/hashicorp/amazon"
+      version = "~> 1"
+    }
+  }
 }
 
 build {
