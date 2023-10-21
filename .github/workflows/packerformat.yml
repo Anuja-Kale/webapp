@@ -12,10 +12,11 @@ jobs:
       - name: Check out code from the repository
         uses: actions/checkout@v2
 
-      - name: Install Packer
-        uses: hashicorp/setup-packer@v1
-        with:
-          packer-version: '1.7.x' # specify the desired Packer version
+      - name: Manually Install Packer
+        run: |
+          wget https://releases.hashicorp.com/packer/1.7.8/packer_1.7.8_linux_amd64.zip
+          unzip packer_1.7.8_linux_amd64.zip
+          sudo mv packer /usr/local/bin/
 
       - name: Run 'packer fmt' and check for modifications
         run: |
