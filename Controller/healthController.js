@@ -1,5 +1,5 @@
 const express = require('express');
-const pool = require('../Models/datab');
+const pool = require('../Models/db');
 
 function checkHealth(req, res, next) {
     if (req.method !== 'GET') {

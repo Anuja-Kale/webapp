@@ -1,10 +1,11 @@
-const  Assignment1  = require('../Models/assignment');
-const Users = require('../Models/user');  // Using the model file you've shared
-const sequelize = require('../Models/datab');
+const  Assignment1  = require('../Models/Assignment');
+const User = require('../Models/User');  // Using the model file you've shared
+const sequelize = require('../Models/db');
 
 exports.getAssignmentById = async (req, res) => {
     try {
-        const { id } = req.query;
+        const { id } = req.params;
+
         const userId = req.user.id;
         console.log(id)
     
@@ -13,20 +14,20 @@ exports.getAssignmentById = async (req, res) => {
         console.log(fields);
         // console.log('Hello')
 
-        const assignment1 = await Assignment1.findOne({where: { id }, 
+        const assg = await Assignment1.findOne({where: { id }, 
         // const assg = await Assignment1.findOne({where: { id: id,userId: userId}, 
         include: [{
-                model: Users,
+                model: User,
                 as: 'user', // This should match the alias in your associations
                 attributes: ['id', 'first_name', 'last_name', 'email'] // Choose the user attributes you want to fetch
             }]
         })
 
         // console.log('hello')
-        console.log(assignment1)
+        console.log(assg)
             
         // Check if assignment exists
-        if (!assignment1) {
+        if (!assg) {
             return res.status(404).json({ message: 'Assignment not found' });
         }
         
@@ -36,17 +37,17 @@ exports.getAssignmentById = async (req, res) => {
             status: 'success',
             message: 'Assignment fetched successfully',
             data: {
-                id: assignment1.id,
-                name: assignment1.name,
-                points: assignment1.points,
-                numOfAttempts: assignment1.num_of_attempts,
-                deadline: assignment1.deadline,
-                assignmentCreated: assignment1.assignment_created,
-                assignmentUpdated: assignment1.assignment_updated,
-                userId: assignment1.userId,
-                useremail: assignment1.user.email,
-                userFName: assignment1.user.first_name,
-                userLName: assignment1.user.last_name // This will have the associated user details
+                id: assg.id,
+                name: assg.name,
+                points: assg.points,
+                numOfAttempts: assg.num_of_attempts,
+                deadline: assg.deadline,
+                assignmentCreated: assg.assignment_created,
+                assignmentUpdated: assg.assignment_updated,
+                userId: assg.userId,
+                useremail: assg.user.email,
+                userFName: assg.user.first_name,
+                userLName: assg.user.last_name // This will have the associated user details
             }
         };
 
