@@ -3,16 +3,12 @@
 const fs = require('fs').promises;
 const path = require('path');
 const csvParser = require('papaparse');
-const { User } = require('../Models/user');
+const { User } = require('../Models/User');
 const sequelize = require('../Models/db');
 const User1 = sequelize.models.User;
 const bcrypt = require('bcrypt');
 
-// console.log("Hello");
-// console.log(User1);
-
-
-const verifyUsers = async (req, res) => {
+const verifyUser = async (req, res) => {
     const { first_name, last_name, email, password } = req.body;
     console.log(req.body)
     // const { email, password } = req.body;
@@ -23,11 +19,6 @@ const verifyUsers = async (req, res) => {
         const existingUser = await User1.findOne({ where: { email } });
         console.log(existingUser)
 
-        
-
-        // if (existingUser) {
-        //     return res.status(409).json({ message: 'User already exists' });
-        // }
         if (existingUser) {
             // return res.status(404).json({ message: 'User not found' });
             const isPasswordValid = await bcrypt.compare(password, existingUser.password);
@@ -67,4 +58,4 @@ const verifyUsers = async (req, res) => {
     }
 };
 
-module.exports = verifyUsers;
+module.exports = verifyUser;

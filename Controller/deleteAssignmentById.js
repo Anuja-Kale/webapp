@@ -1,12 +1,13 @@
-const Assignment = require('../Models/assignment');
+const Assignment = require('../Models/Assignment');
 
 exports.deleteAssignmentById = async (req, res) => {
     try {
         // Retrieve ID from the request parameters
-        const { id } = req.query;
+        const { id } = req.params;
+
 
          // Assuming req.user.id holds the authenticated user's ID
-         const usersId = req.user.id;
+         const userId = req.user.id;
 
          // Retrieve the assignment to check the associated user
          const assignment = await Assignment.findOne({
@@ -19,7 +20,7 @@ exports.deleteAssignmentById = async (req, res) => {
          }
  
          // Check if user is authorized to delete the assignment
-         if (assignment.userId !== usersId) {
+         if (assignment.userId !== userId) {
              return res.status(403).json({ message: 'Forbidden: You do not have permission to delete this assignment' });
          }
          

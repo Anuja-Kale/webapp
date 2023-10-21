@@ -2,7 +2,7 @@ const { Sequelize, DataTypes, Model } = require('sequelize');
 // const sequelize = new Sequelize('sqlite::memory:');
 //const sequelize = require('./db');
 const bcrypt = require('bcrypt')
-const sequelize = require('./datab');
+const sequelize = require('./db');
 
 const User1 = sequelize.define('User', {
     id: {
@@ -47,7 +47,6 @@ const User1 = sequelize.define('User', {
   timestamps: false,
   });
 
-  
   User1.associate = (models) => {
     User1.hasMany(models.Assignment, { foreignKey: 'userId', as: 'assignments' });
   };

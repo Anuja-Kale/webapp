@@ -1,17 +1,22 @@
-const Assignment = require('../Models/assignment');
+const Assignment = require('../Models/Assignment');
 
 exports.updateAssignmentById = async (req, res) => {
     try {
         // Extracting the ID from the request parameters
-        const { id } = req.query;
-        const usersId = req.user.id;
+        const { id } = req.params;
+
+        const userId = req.user.id;
 
         // Validating the request body
-        const { name, points, num_of_attempts, deadline } = req.body;
-        console.log(deadline)
+        const { name, points, num_of_attempts, deadline, ...extraFields } = req.body;
+
+        // Check if there are any extra fields in the request body
+        if (Object.keys(extraFields).length > 0) {
+            return res.status(400).end(); // Return empty response without any content
+        }
 
         if (!name && !points && !num_of_attempts && !deadline) {
-            return res.status(400).json({ message: 'No fields to update were provided' });
+            return res.status(400).end(); // Return empty response without any content
         }
 
         console.log(id)
@@ -20,11 +25,11 @@ exports.updateAssignmentById = async (req, res) => {
         const assignment = await Assignment.findOne({ where: { id } });
 
         if (!assignment) {
-            return res.status(404).json({ message: 'Assignment not found' });
+            return res.status(404).end(); // Return empty response without any content
         }
 
-        if (assignment.userId !== usersId) {
-            return res.status(403).json({ message: 'Forbidden: You do not have permission to update this assignment' });
+        if (assignment.userId !== userId) {
+            return res.status(403).end(); // Return empty response without any content
         }
 
         // Updating the assignment
@@ -35,14 +40,8 @@ exports.updateAssignmentById = async (req, res) => {
 
         await assignment.save();
 
-        res.status(204).send();
-
-        // Sending the updated assignment in the response
-        // res.status(200).json({
-        //     message: 'Assignment updated successfully',
-        //     data: assignment
-        // });
+        res.status(204).end(); // Return empty response without any content
     } catch (error) {
-        return res.status(500).json({ message: 'Server error', error: error.message });
+        return res.status(500).end(); // Return empty response without any content
     }
 };
