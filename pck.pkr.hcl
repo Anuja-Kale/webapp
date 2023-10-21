@@ -1,255 +1,120 @@
 variable "aws_profile" {
-
-  type = string
-
+  type    = string
   default = "packer-profile"
-
 }
+
 variable "region" {
-
-  type = string
-
+  type    = string
   default = "us-east-1"
-
 }
+
 variable "source_ami_owner" {
-
-  type = string
-
+  type    = string
   default = "249440625046"
-
 }
 
 variable "instance_type" {
-
-  type = string
-
+  type    = string
   default = "t2.micro"
-
 }
 
 variable "ssh_username" {
-
-  type = string
-
+  type    = string
   default = "admin"
-
 }
 
 locals { timestamp = regex_replace(timestamp(), "[- TZ:]", "") }
 
 packer {
-
   required_plugins {
-
     amazon = {
-
-      source = "github.com/hashicorp/amazon"
-
+      source  = "github.com/hashicorp/amazon"
       version = "~> 1"
-
     }
-
   }
-
 }
 
 source "amazon-ebs" "webapp" {
-
-  profile = var.aws_profile
-
-  ami_name = "webapp-ami-${local.timestamp}"
-
+  profile       = var.aws_profile
+  ami_name      = "webapp-ami-${local.timestamp}"
   instance_type = var.instance_type
-
-  region = var.region
-
-  source_ami = "ami-06db4d78cb1d3bbf9"
-
-  ssh_username = var.ssh_username
-
-  ami_users = ["057915486037"] # Replace with the DEMO AWS Account ID 822421370804 112ss822421370804
-
+  region        = var.region
+  source_ami    = "ami-06db4d78cb1d3bbf9"
+  ssh_username  = var.ssh_username
+  ami_users     = ["057915486037"]
 }
-
- 
 
 variable "aws_profile" {
-
   type    = string
-
   default = "dev"
-
 }
-
- 
 
 variable "region" {
-
   type    = string
-
   default = "us-east-1"
-
 }
-
- 
 
 variable "source_ami_owner" {
-
   type    = string
-
   default = "372558015288"
-
- 
-
 }
-
- 
 
 variable "instance_type" {
-
   type    = string
-
   default = "t2.micro"
-
 }
-
- 
 
 variable "ssh_username" {
-
   type    = string
-
   default = "admin"
-
 }
-
- 
 
 locals { timestamp = regex_replace(timestamp(), "[- TZ:]", "") }
 
- 
-
 packer {
-
   required_plugins {
-
     amazon = {
-
       source  = "github.com/hashicorp/amazon"
-
       version = "~> 1"
-
     }
-
   }
-
 }
-
- 
 
 source "amazon-ebs" "webapp" {
-
   profile       = var.aws_profile
-
   ami_name      = "webapp-ami-${local.timestamp}"
-
   instance_type = var.instance_type
-
   region        = var.region
-
- 
-
-  source_ami   = "ami-06db4d78cb1d3bbf9"
-
-  ssh_username = var.ssh_username
-
-  ami_users    = ["822421370804"] # Replace with the DEMO AWS Account ID 822421370804 112ss822421370804
-
+  source_ami    = "ami-06db4d78cb1d3bbf9"
+  ssh_username  = var.ssh_username
+  ami_users     = ["822421370804"]
 }
-
- 
 
 build {
-
   sources = ["source.amazon-ebs.webapp"]
 
- 
-
-  # provisioner "shell" {
-
-  #   script = "./setup-database.sh"
-
-  # }
-
- 
-
- 
-
   provisioner "file" {
-
- 
-
-    source = "webapp.zip"
-
- 
-
+    source      = "webapp.zip"
     destination = "/home/admin/webapp.zip"
-
- 
-
   }
 
- 
-
   provisioner "shell" {
-
     script = "./setup-database.sh"
-
   }
 
- 
-
- 
-
   provisioner "shell" {
-
     inline = [
-
-      "sudo apt-get install unzip", # Making sure unzip is installed
-
+      "sudo apt-get install unzip",
       "cd /home/admin",
-
-      "unzip webapp.zip", # Unzip the webapp.zip
-
-      # "ls -l ",
-
-      "npm install", # Install dependencies
-
-      # "npm test"
-
-      # "node server.js" # Start the server
-
+      "unzip webapp.zip",
+      "npm install"
     ]
-
   }
-
- 
-
- 
 
   provisioner "shell" {
-
     inline = [
-
       "sudo apt clean",
-
       "sudo rm -rf /var/lib/apt/lists/*"
-
     ]
-
   }
-
 }
-
- 
