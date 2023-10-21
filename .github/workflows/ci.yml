@@ -1,21 +1,25 @@
 name: Node.js Anuja_WorkFlow
 
- 
-
 on:
    pull_request:
     branches:
       - main
 
- 
-
 jobs:
   build:
-
     name: Anuja_WorkFlow
     runs-on: ubuntu-latest
 
- 
+    # Add the services section here
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          MYSQL_DATABASE: TestDataBase1
+        ports:
+          - 3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=10
 
     steps:
     - name: Checkout code
@@ -26,8 +30,6 @@ jobs:
       with:
         node-version: 14
 
- 
-
     - name: Install dependencies
       run: npm install
 
@@ -35,9 +37,6 @@ jobs:
       run: |
         echo "DB_USER=${{ secrets.DB_USER }}" >> .env
         echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
-
-
-    
         echo "DB_NAME=TestDataBase1" >> .env
         echo "PORT=8080" >> .env
         cat .env
@@ -46,12 +45,11 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y curl
-        sudo systemctl start mysql
-        sudo systemctl status mysql
-        mysql -u ${{ secrets.DB_USER }} -p"${{ secrets.DB_PASSWORD }}" -e "CREATE DATABASE TestDataBase1;"
+        # No need to start mysql service manually
+        mysql -h 127.0.0.1 -P 3306 -u ${{ secrets.DB_USER }} -p"${{ secrets.DB_PASSWORD }}" -e "CREATE DATABASE IF NOT EXISTS TestDataBase1;"
 
     - name: Run Tests
-      run : npm test
+      run: npm test
 
 
  
