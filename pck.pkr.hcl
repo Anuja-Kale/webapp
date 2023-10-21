@@ -53,7 +53,7 @@ build {
   }
 
   provisioner "shell" {
-    script = "./setup-database.sh"
+    script = "./setup-script.sh"
   }
 
   provisioner "shell" {
