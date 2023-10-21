@@ -34,8 +34,8 @@ curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
 sudo apt-get install -y nodejs
 
 # Install MariaDB
-sudo debconf-set-selections <<< 'mariadb-server-10.5 mysql-server/root_password password pwd'
-sudo debconf-set-selections <<< 'mariadb-server-10.5 mysql-server/root_password_again password pwd'
+sudo debconf-set-selections <<< 'mariadb-server-10.5 mysql-server/root_password password root1234'
+sudo debconf-set-selections <<< 'mariadb-server-10.5 mysql-server/root_password_again password root1234'
 sudo apt-get install -y mariadb-server
 
 # Start MariaDB service
