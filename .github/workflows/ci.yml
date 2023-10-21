@@ -46,7 +46,9 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y curl
         # No need to start mysql service manually
-        mysql -h 127.0.0.1 -P 3306 -u ${{ secrets.DB_USER }} -p"${{ secrets.DB_PASSWORD }}" -e "CREATE DATABASE IF NOT EXISTS TestDataBase1;"
+        # mysql -h 127.0.0.1 -P 3306 -u ${{ secrets.DB_USER }} -p"${{ secrets.DB_PASSWORD }}" -e "CREATE DATABASE IF NOT EXISTS TestDataBase1;"
+        # Use the provided command to connect to MySQL service
+        mysql -h mysql -P 3306 -u ${{ secrets.DB_USER }} -p"${{ secrets.DB_PASSWORD }}" -e "CREATE DATABASE IF NOT EXISTS TestDataBase1;"
 
     - name: Run Tests
       run: npm test
