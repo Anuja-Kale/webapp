@@ -44,17 +44,6 @@ source "amazon-ebs" "webapp" {
   ami_users     = ["057915486037", "822421370804"]
 }
 
-locals { timestamp = regex_replace(timestamp(), "[- TZ:]", "") }
-
-packer {
-  required_plugins {
-    amazon = {
-      source  = "github.com/hashicorp/amazon"
-      version = "~> 1"
-    }
-  }
-}
-
 build {
   sources = ["source.amazon-ebs.webapp"]
 
