@@ -3,21 +3,21 @@ name: Build and Distribute AMI
 on:
   pull_request:
     branches:
-      - main  # or replace with the branch you use
+      - main  # Replace with the branch you use, if different
 
 env:
-  AWS_REGION: 'us-east-1'  # e.g., us-east-1
-  AWS_ACCOUNT_ID_DEV: '249440625046'
-  AWS_ACCOUNT_ID_DEMO: '057915486037'
+  AWS_REGION: 'us-east-1'  # Update if you're using a different region
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      # Assuming you have a step to run integration tests
+      # Insert any required setup steps here, such as setting up dependencies required for your build and tests.
+      
       - name: Run integration tests
         run: |
           # Add commands to run your integration tests
@@ -25,33 +25,28 @@ jobs:
           # npm install
           # npm run test
 
-      # Build your application's artifact
       - name: Build application artifact
         run: |
           # Add commands to build your project's artifact
           # Example:
           # mvn package
 
-      # If your project's build generates artifacts, you can use this step to upload them
       - name: Upload build artifact
         uses: actions/upload-artifact@v2
         with:
           name: my-artifact
-          path: path/to/your/artifact
+          path: path/to/your/artifact  # Update this path
 
-      # Manual installation of Packer
       - name: Install Packer
         run: |
           curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
           sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
           sudo apt-get update && sudo apt-get install packer
 
-      # Initialize and run Packer. The specific commands depend on your Packer template configuration.
       - name: Initialize Packer
         run: |
-          packer init pck.pkr.hcl  
+          packer init pck.pkr.hcl  # Ensure this command and file align with your project's specifics
 
-      # Configuring AWS credentials for Packer to access AWS
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -59,7 +54,10 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      # Build AMI using Packer
+      - name: Verify AWS CLI version
+        run: aws --version
+
       - name: Build AMI
         run: |
-          packer build pck.pkr.hcl
+          packer build pck.pkr.hcl  # Ensure this command and file align with your project's specifics
+
