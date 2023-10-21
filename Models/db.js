@@ -9,6 +9,22 @@
 
 // module.exports = sequelize
 
+// const sequelize = new Sequelize(
+//     process.env.DB_DATABASE, 
+//     process.env.DB_USERNAME, 
+//     process.env.DB_PASSWORD, 
+//     {
+//         host: process.env.DB_HOST,
+//         dialect: 'mysql',
+//         port: 3306,
+//     }
+// );
+// module.exports = sequelize
+
+
+const Sequelize = require('sequelize');
+// require('dotenv').config(); // You can uncomment this if you're using dotenv for environment variables
+
 const sequelize = new Sequelize(
     process.env.DB_DATABASE, 
     process.env.DB_USERNAME, 
@@ -19,4 +35,5 @@ const sequelize = new Sequelize(
         port: 3306,
     }
 );
-module.exports = sequelize
+
+module.exports = sequelize;
