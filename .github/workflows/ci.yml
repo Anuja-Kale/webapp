@@ -7,7 +7,7 @@ on:
       
 jobs:
   build:
-    name: Anuja_WorkFlow
+    name: Node.js Anuja_WorkFlow
     runs-on: ubuntu-latest
 
     services:
@@ -43,6 +43,10 @@ jobs:
     - name: Test MySQL Connection
       run: |
         mysql --host=127.0.0.1 --port=3306 --user=root --password=root1234 -e "SHOW DATABASES;"
+
+    - name: Check and Drop existing rootuser
+      run: |
+        mysql --host=127.0.0.1 --port=3306 --user=root --password=root1234 -e "DROP USER IF EXISTS 'rootuser'@'%';"
 
     - name: Create and set up database user
       run: |
