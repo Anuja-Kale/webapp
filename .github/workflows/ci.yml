@@ -54,10 +54,6 @@ jobs:
         mysql --host=127.0.0.1 --port=3306 --user=root --password=root1234 -e "GRANT ALL PRIVILEGES ON *.* TO 'rootuser'@'%';"
         mysql --host=127.0.0.1 --port=3306 --user=root --password=root1234 -e "FLUSH PRIVILEGES;"
 
-    - name: Configure database
-      run: |
-        mysql --host=localhost --port=3306 --user=rootuser --password=root1234 -e "CREATE DATABASE IF NOT EXISTS projectDatabase;"
-
     - name: Test rootuser Connection
       run: |
         mysql --host=127.0.0.1 --port=3306 --user=rootuser --password=root1234 -e "SHOW DATABASES;"
