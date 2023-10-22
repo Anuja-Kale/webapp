@@ -30,7 +30,7 @@ sudo systemctl enable mysql
 # Secure MariaDB installation (set root password and remove anonymous users)
 sudo mysql_secure_installation <<EOF
 
-pwd
+root1234
 n
 n
 y
