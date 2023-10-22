@@ -67,31 +67,43 @@ SQL
 fi
 
 # Secure MariaDB installation
-sudo mysql_secure_installation <<EOF
+# sudo mysql_secure_installation <<EOF
 
-n
-root
-root
-y
-y
-y
-y
-EOF
+# n
+# root
+# root
+# y
+# y
+# y
+# y
+# EOF
 
 # Ensure /opt/webapp directory exists and has the right permissions
 sudo mkdir -p /opt/webapp
 sudo chown -R $(whoami) /opt/webapp
 
-# Change to webapp directory, initialize npm (if package.json is absent), and install sequelize, mysql, and express using npm
-cd /opt/webapp || exit
-[ ! -f package.json ] && npm init -y
-npm install sequelize mysql express
+# Create the .env file in the /opt/webapp directory
+cat > /opt/webapp/.env <<EOL
+DB_HOST=localhost
+DB_USERNAME=root
+DB_PASSWORD=root
+DB_DATABASE=projectDatabase
+EOL
 
-# Check express installation and exit if not found
-if [ ! -d "node_modules/express" ]; then
-    echo "Express installation failed. Exiting."
-    exit 1
-fi
+# Change the owner of the .env file if necessary
+# This is assuming that your application might run as a different user
+sudo chown $(whoami) /opt/webapp/.env
+
+# # Change to webapp directory, initialize npm (if package.json is absent), and install sequelize, mysql, and express using npm
+# cd /opt/webapp || exit
+# [ ! -f package.json ] && npm init -y
+# npm install sequelize mysql express
+
+# # Check express installation and exit if not found
+# if [ ! -d "node_modules/express" ]; then
+# echo "Express installation failed. Exiting."
+#     exit 1
+# fi
 
 # Add Node.js app to startup using systemd
 echo "[Unit]
