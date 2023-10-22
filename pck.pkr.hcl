@@ -72,6 +72,7 @@ build {
       "sudo mkdir -p /opt/webapp",
       "sudo mv /tmp/webapp/* /opt/webapp/",
       "sudo chown -R nobody:nogroup /opt/webapp"
+      "npm install"
     ]
   }
 
