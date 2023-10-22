@@ -44,7 +44,7 @@ fi
 # Secure MariaDB installation (set root password and remove anonymous users)
 sudo mysql_secure_installation <<EOF
 
-root1234
+root
 n
 n
 y
