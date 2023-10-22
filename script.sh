@@ -4,11 +4,8 @@
 sudo apt update && sudo apt -y upgrade
 
 # Install Node.js and npm from the nodesource repository for the latest version
-curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -  # <-- Updated to 18.x
 sudo apt-get install -y nodejs
-
-# The 'npm' package isn't required as the latest Node.js comes with npm. If it doesn't, remove the comment from the line below.
-# sudo apt-get install -y npm
 
 # Install sequelize globally (if needed in your case)
 npm install -g sequelize
@@ -27,7 +24,7 @@ if ! sudo systemctl is-active --quiet mariadb; then
 fi
 
 # Create a database if it doesn't exist
-DB_NAME="projectDatabase"  # Updated to the new database name
+DB_NAME="projectDatabase"
 
 if sudo mysql -u root -e "USE $DB_NAME" 2>/dev/null; then
     echo "Database $DB_NAME already exists."
@@ -42,8 +39,7 @@ SQL
     echo "Database $DB_NAME created."
 fi
 
-# Secure MariaDB installation (set root password and remove anonymous users)
-# Since your password is already 'root', we'll make sure it remains unchanged during the secure installation.
+# Secure MariaDB installation
 sudo mysql_secure_installation <<EOF
 
 n
@@ -61,7 +57,7 @@ sudo chown -R $(whoami) /opt/webapp
 
 # Change to webapp directory and install sequelize, mysql, and express using npm
 cd /opt/webapp || exit
-npm install sequelize mysql express  # <-- Added 'express' here
+npm install sequelize mysql express
 
 # Add Node.js app to startup using systemd
 echo "[Unit]
@@ -69,7 +65,7 @@ Description=Node.js WebApp
 After=network.target
 
 [Service]
-ExecStart=/usr/bin/node /opt/webapp/index.js
+ExecStart=/usr/bin/node /opt/webapp/server.js
 WorkingDirectory=/opt/webapp
 StandardOutput=syslog
 StandardError=syslog
