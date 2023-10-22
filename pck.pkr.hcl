@@ -47,9 +47,39 @@ source "amazon-ebs" "webapp" {
 build {
   sources = ["source.amazon-ebs.webapp"]
 
+  provisioner "shell" {
+    inline = [
+      "sudo mkdir -p /tmp/webapp && sudo chown admin:admin /tmp/webapp"
+    ]
+  }
+
+  provisioner "shell" {
+    inline = [
+      "ls -ld /tmp/webapp",
+      "id"
+    ]
+  }
+
   provisioner "file" {
-    source      = "webapp.zip"
-    destination = "/home/admin/webapp.zip"
+    source      = "./"
+    destination = "/tmp/webapp"
+    direction   = "upload"
+  }
+
+  provisioner "shell" {
+    inline = [
+      "sudo mkdir -p /opt/webapp",
+      "sudo mv /tmp/webapp/* /opt/webapp/",
+      "sudo chown -R nobody:nogroup /opt/webapp"
+    ]
+  }
+
+  provisioner "shell" {
+    inline = [
+      "export DEBIAN_FRONTEND=noninteractive",
+      "sudo apt-get update",
+      "sudo apt-get install -y mariadb-server mariadb-client"
+    ]
   }
 
   provisioner "shell" {
@@ -58,17 +88,13 @@ build {
 
   provisioner "shell" {
     inline = [
-      "sudo apt-get install unzip",
-      "cd /home/admin",
-      "unzip webapp.zip",
-      "npm install"
-    ]
-  }
-
-  provisioner "shell" {
-    inline = [
       "sudo apt clean",
       "sudo rm -rf /var/lib/apt/lists/*"
     ]
+  }
+
+  post-processor "manifest" {
+    output     = "manifest.json"
+    strip_path = true
   }
 }

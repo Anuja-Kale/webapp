@@ -39,6 +39,52 @@ y
 y
 EOF
 
+# Ensure /opt/webapp directory exists
+
+sudo mkdir -p /opt/webapp
+
+# Adjust permissions for the webapp directory
+
+sudo chown -R $(whoami) /opt/webapp
+
+# Set up database, user creation, etc. as per your needs
+
+# At this point, since sequelize and mysql are npm packages, you should be able to cd into your app directory and install them using npm
+
+cd /opt/webapp || exit
+
+# You can install sequelize and mysql using npm now
+
+npm install sequelize mysql
+
+# Optionally, you can include additional application-specific setup steps here.
+
+# Add Node.js app to startup using systemd:
+
+echo "[Unit]
+
+Description=Node.js WebApp
+
+After=network.target
+
+[Service]
+
+ExecStart=/usr/bin/node /opt/webapp/index.js
+
+WorkingDirectory=/opt/webapp
+
+StandardOutput=syslog
+
+StandardError=syslog
+
+Restart=always
+
+User=nobody
+
+[Install]
+
+WantedBy=multi-user.target" | sudo tee /etc/systemd/system/webapp.service
+
 # Additional configurations and setup for your web application can be added here.
 
 # Restart MariaDB for changes to take effect
