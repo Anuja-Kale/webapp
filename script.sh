@@ -3,9 +3,35 @@
 # Update and upgrade the system
 sudo apt update && sudo apt -y upgrade
 
+# Check if Node.js is already installed and if so, remove it
+if command -v node > /dev/null 2>&1; then
+    sudo apt-get purge --auto-remove nodejs npm
+fi
+
 # Install Node.js and npm from the nodesource repository for the latest version
-curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -  # <-- Updated to 18.x
-sudo apt-get install -y nodejs npm
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+# Ensure PATH is correctly set
+export PATH="$PATH:/usr/bin:/usr/local/bin"
+
+# Check if Node.js was installed correctly
+if command -v node > /dev/null 2>&1; then
+    echo "Node.js is installed."
+    node -v
+else
+    echo "Node.js installation failed."
+    exit 1
+fi
+
+# Check if npm was installed correctly
+if command -v npm > /dev/null 2>&1; then
+    echo "npm is installed."
+    npm -v
+else
+    echo "npm installation failed."
+    exit 1
+fi
 
 # Install sequelize globally (if needed in your case)
 npm install -g sequelize
