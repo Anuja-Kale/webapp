@@ -82,9 +82,16 @@ EOF
 sudo mkdir -p /opt/webapp
 sudo chown -R $(whoami) /opt/webapp
 
-# Change to webapp directory and install sequelize, mysql, and express using npm
+# Change to webapp directory, initialize npm (if package.json is absent), and install sequelize, mysql, and express using npm
 cd /opt/webapp || exit
+[ ! -f package.json ] && npm init -y
 npm install sequelize mysql express
+
+# Check express installation and exit if not found
+if [ ! -d "node_modules/express" ]; then
+    echo "Express installation failed. Exiting."
+    exit 1
+fi
 
 # Add Node.js app to startup using systemd
 echo "[Unit]
