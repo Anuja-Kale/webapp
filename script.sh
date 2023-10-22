@@ -5,7 +5,7 @@ sudo apt update && sudo apt -y upgrade
 
 # Install Node.js and npm from the nodesource repository for the latest version
 curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -  # <-- Updated to 18.x
-sudo apt-get install -y nodejs
+sudo apt-get install -y nodejs npm
 
 # Install sequelize globally (if needed in your case)
 npm install -g sequelize
@@ -32,6 +32,7 @@ else
     echo "Creating database $DB_NAME..."
     sudo mysql -u root -proot <<SQL
 CREATE DATABASE $DB_NAME;
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'root';
 GRANT ALL PRIVILEGES ON $DB_NAME.* TO 'root'@'localhost' IDENTIFIED BY 'root';
 FLUSH PRIVILEGES;
 SHOW DATABASES;
