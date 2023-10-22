@@ -21,7 +21,6 @@ require('dotenv').config();
 // );
 // module.exports = sequelize
 
-
 const Sequelize = require('sequelize');
 // require('dotenv').config(); // You can uncomment this if you're using dotenv for environment variables
 
