@@ -130,13 +130,13 @@ User=nobody
 [Install]
 WantedBy=multi-user.target" | sudo tee /etc/systemd/system/webapp.service
 
-# # Reload systemd to recognize new service
-# sudo systemctl daemon-reload
+# Reload systemd to recognize new service
+sudo systemctl daemon-reload
 
-# # Enable and start the new service
-# sudo systemctl enable webapp.service
-# sleep 3  # Delay to let system catch up
-# sudo systemctl start webapp.service
+# Enable and start the new service
+sudo systemctl enable webapp.service
+sleep 3  # Delay to let system catch up
+sudo systemctl start webapp.service
 
 # System Logs for Debugging: Add logs output if the service fails to start
 if ! sudo systemctl is-active --quiet webapp.service; then
