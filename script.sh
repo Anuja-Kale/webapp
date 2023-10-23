@@ -108,45 +108,45 @@ if [ ! -d "node_modules/express" ]; then
     exit 1
 fi
 
-# Check if port 8080 is in use, and if so, kill the process using it
-if lsof -ti:8080 > /dev/null ; then
-    echo "Port 8080 is in use, attempting to free it..."
-    sudo lsof -ti:8080 | xargs sudo kill
-fi
+# # Check if port 8080 is in use, and if so, kill the process using it
+# if lsof -ti:8080 > /dev/null ; then
+#     echo "Port 8080 is in use, attempting to free it..."
+#     sudo lsof -ti:8080 | xargs sudo kill
+# fi
 
-# Add Node.js app to startup using systemd
-echo "[Unit]
-Description=Node.js WebApp
-After=network.target
+# # Add Node.js app to startup using systemd
+# echo "[Unit]
+# Description=Node.js WebApp
+# After=network.target
 
-[Service]
-ExecStart=/usr/bin/node /opt/webapp/server.js
-WorkingDirectory=/opt/webapp
-StandardOutput=syslog
-StandardError=syslog
-Restart=always
-User=nobody
+# [Service]
+# ExecStart=/usr/bin/node /opt/webapp/server.js
+# WorkingDirectory=/opt/webapp
+# StandardOutput=syslog
+# StandardError=syslog
+# Restart=always
+# User=nobody
 
-[Install]
-WantedBy=multi-user.target" | sudo tee /etc/systemd/system/webapp.service
+# [Install]
+# WantedBy=multi-user.target" | sudo tee /etc/systemd/system/webapp.service
 
-# Reload systemd to recognize new service
-  sudo systemctl daemon-reload
+# # Reload systemd to recognize new service
+#   sudo systemctl daemon-reload
 
-# Enable and start the new service
-# sudo systemctl enable webapp.service
-# sleep 3  # Delay to let system catch up
-# sudo systemctl start webapp.service
+# # Enable and start the new service
+# # sudo systemctl enable webapp.service
+# # sleep 3  # Delay to let system catch up
+# # sudo systemctl start webapp.service
 
-# System Logs for Debugging: Add logs output if the service fails to start
-if ! sudo systemctl is-active --quiet webapp.service; then
-    echo "Service failed to start, here are the recent system logs:"
-    sudo journalctl -xe
-    exit 1
-fi
+# # System Logs for Debugging: Add logs output if the service fails to start
+# if ! sudo systemctl is-active --quiet webapp.service; then
+#     echo "Service failed to start, here are the recent system logs:"
+#     sudo journalctl -xe
+#     exit 1
+# fi
 
-# Clean up (remove unnecessary packages and clear cache)
-sudo apt-get autoremove -y
-sudo apt-get clean
+# # Clean up (remove unnecessary packages and clear cache)
+# sudo apt-get autoremove -y
+# sudo apt-get clean
 
 # End of the script
