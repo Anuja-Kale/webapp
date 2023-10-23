@@ -131,7 +131,7 @@ User=nobody
 WantedBy=multi-user.target" | sudo tee /etc/systemd/system/webapp.service
 
 # Reload systemd to recognize new service
-# sudo systemctl daemon-reload
+  sudo systemctl daemon-reload
 
 # Enable and start the new service
 # sudo systemctl enable webapp.service
