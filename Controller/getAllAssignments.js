@@ -1,6 +1,6 @@
 // Import necessary modules and models
-const Assignment1 = require('../Models/Assignment'); // Import the Assignment model
-const User = require('../Models/User'); // Import the User model (assuming it's the one shared with you)
+const Assignment1 = require('../Models/assignment'); // Import the Assignment model
+const User = require('../Models/user'); // Import the User model (assuming it's the one shared with you)
 
 // Define a function to get all assignments
 exports.getAllAssignments = async (req, res) => {

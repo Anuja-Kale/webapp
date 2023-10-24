@@ -56,6 +56,7 @@ function healthz(req, res) {
   });
 }
 
+
 module.exports = {
   checkHealth,
   healthz
