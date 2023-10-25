@@ -1,7 +1,7 @@
 name: Build and Distribute AMI
 
 on:
-  push:
+  pull_request:
     branches:
       - main  # or replace with the branch you use
 
@@ -58,6 +58,3 @@ jobs:
 
       - name: Build AMI
         run: packer build pck.pkr.hcl
-
-
-
