@@ -23,7 +23,7 @@ jobs:
 
       - name: Run 'packer fmt' and check for modifications
         run: |
-          packer fmt pck.pkr.hcl
+               packer fmt pck.pkr.hcl
     
       - name: Initialize Packer
         run: |
