@@ -1,26 +1,21 @@
 name: Node.js Anuja_WorkFlow
 
+ 
+
 on:
    pull_request:
     branches:
       - main
-      
+
+ 
+
 jobs:
   build:
-    name: Node.js Anuja_WorkFlow
+
+    name: Anuja_WorkFlow
     runs-on: ubuntu-latest
 
-    services:
-      mysql:
-        image: mysql:5.7
-        env:
-          MYSQL_ROOT_PASSWORD: root1234
-          MYSQL_DATABASE: projectDatabase
-          MYSQL_USER: rootuser
-          MYSQL_PASSWORD: root1234
-        ports:
-          - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=10
+ 
 
     steps:
     - name: Checkout code
@@ -30,42 +25,35 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: 14
-        
+
+ 
+
     - name: Install dependencies
       run: npm install
 
-    - name: Wait for MySQL to be ready
+    - name: Display .env file
       run: |
-        while ! nc -z localhost 3306; do
-          sleep 1
-        done
+        echo "DB_USER=${{ secrets.DB_USER }}" >> .env
+        echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
 
-    - name: Test MySQL Connection
+
+    
+        echo "DB_NAME=TestDataBase1" >> .env
+        echo "PORT=8080" >> .env
+        cat .env
+
+    - name: configuremysql
       run: |
-        mysql --host=127.0.0.1 --port=3306 --user=root --password=root1234 -e "SHOW DATABASES;"
-
-    - name: Check and Drop existing rootuser
-      run: |
-        mysql --host=127.0.0.1 --port=3306 --user=root --password=root1234 -e "DROP USER IF EXISTS 'rootuser'@'%';"
-
-    - name: Create and set up database user
-      run: |
-        mysql --host=127.0.0.1 --port=3306 --user=root --password=root1234 -e "CREATE USER 'rootuser'@'%' IDENTIFIED BY 'root1234';"
-        mysql --host=127.0.0.1 --port=3306 --user=root --password=root1234 -e "GRANT ALL PRIVILEGES ON *.* TO 'rootuser'@'%';"
-        mysql --host=127.0.0.1 --port=3306 --user=root --password=root1234 -e "FLUSH PRIVILEGES;"
-
-    - name: Test rootuser Connection
-      run: |
-        mysql --host=127.0.0.1 --port=3306 --user=rootuser --password=root1234 -e "SHOW DATABASES;"
-
-    - name: List project directory structure
-      run: find . -print
+        sudo apt-get update
+        sudo apt-get install -y curl
+        sudo systemctl start mysql
+        sudo systemctl status mysql
+        mysql -u ${{ secrets.DB_USER }} -p"${{ secrets.DB_PASSWORD }}" -e "CREATE DATABASE TestDataBase1;"
 
     - name: Run Tests
-      run: npm test
-      env:
-        NODE_ENV: "test"
-        DB_HOST: "localhost"
-        DB_USERNAME: "rootuser"
-        DB_PASSWORD: "root1234"
-        DB_DATABASE: "projectDatabase"
+      run : npm test
+
+
+ 
+
+# checking CI command on PR - 1.2.3
