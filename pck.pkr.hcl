@@ -84,7 +84,7 @@ build {
   }
 
   provisioner "shell" {
-    script = "./script.sh"
+    script = "./script1.sh"
   }
 
   provisioner "shell" {
