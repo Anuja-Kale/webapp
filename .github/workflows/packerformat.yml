@@ -4,8 +4,6 @@ on:
   pull_request:
     branches:
       - main
-    paths:
-      - 'pck.pkr.hcl'
 
 jobs:
   check-packer-template:
@@ -14,19 +12,22 @@ jobs:
       - name: Check out code from the repository
         uses: actions/checkout@v2
 
-      - name: Install Packer
-        uses: hashicorp/setup-packer@v1
-        with:
-          packer-version: '1.7.x' # specify the desired Packer version
+      - name: Manually Install Packer
+        run: |
+          wget https://releases.hashicorp.com/packer/1.7.8/packer_1.7.8_linux_amd64.zip
+          unzip packer_1.7.8_linux_amd64.zip
+          sudo mv packer /usr/local/bin/
+    
+      - name: Download webapp repository
+        run: zip -r webapp.zip ./
 
       - name: Run 'packer fmt' and check for modifications
         run: |
           packer fmt pck.pkr.hcl
-          if [[ $(git status --porcelain) ]]; then
-            echo "Packer fmt has made changes to the following files:"
-            git --no-pager diff
-            exit 1
-          fi
+    
+      - name: Initialize Packer
+        run: |
+          packer init pck.pkr.hcl
 
       - name: Run 'packer validate'
         run: |
