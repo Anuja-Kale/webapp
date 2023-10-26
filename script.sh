@@ -1,31 +1,5 @@
 #!/bin/bash
 
-# Load environment variables from .env file
-# source .env
-
-# # Securely read the MySQL root password from an environment variable
-# if [ -z "$MYSQL_ROOT_PASSWORD" ]; then
-#   echo "MySQL root password not set. Exiting."
-#   exit 1
-# fi
-
-# # Set MySQL root password
-# mysql --user=root --password="$MYSQL_ROOT_PASSWORD" -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '$MYSQL_ROOT_PASSWORD';"
-
-# # Additional MySQL configuration commands
-# # For example, create a database and user
-# # mysql --user=root --password="$MYSQL_ROOT_PASSWORD" -e "CREATE DATABASE mydb;"
-# # mysql --user=root --password="$MYSQL_ROOT_PASSWORD" -e "CREATE USER 'myuser'@'localhost' IDENTIFIED BY 'mypassword';"
-# # mysql --user=root --password="$MYSQL_ROOT_PASSWORD" -e "GRANT ALL PRIVILEGES ON mydb.* TO 'myuser'@'localhost';"
-# # ...
-
-# # Restart MySQL service
-# sudo systemctl restart mysql
-
-
-
-#!/bin/bash
-
 # Update package repositories
 sudo apt-get update
 
