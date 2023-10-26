@@ -1,7 +1,7 @@
 name: Build and Distribute AMI
 
 on:
-  pull_request:
+  push:
     branches:
       - main  # or replace with the branch you use
 
