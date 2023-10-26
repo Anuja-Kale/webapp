@@ -58,3 +58,6 @@ jobs:
 
       - name: Build AMI
         run: packer build pck.pkr.hcl
+
+
+
