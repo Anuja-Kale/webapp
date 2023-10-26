@@ -35,13 +35,13 @@ packer {
 }
 
 source "amazon-ebs" "webapp" {
-  profile       =   var.aws_profile
-  ami_name      = "webapp-ami-${local.timestamp}"
-  instance_type = var.instance_type
-  region        = var.region
-  source_ami    = "ami-06db4d78cb1d3bbf9"
-  ssh_username  = var.ssh_username
-  ami_users     = ["057915486037", "822421370804"]
+  profile        = var.aws_profile
+  ami_name       = "webapp-ami-${local.timestamp}"
+  instance_type  = var.instance_type
+  region         = var.region
+  source_ami     = "ami-06db4d78cb1d3bbf9"
+  ssh_username   = var.ssh_username
+  ami_users      = ["057915486037", "822421370804"]
   ssh_agent_auth = false
 }
 
@@ -68,10 +68,17 @@ build {
   }
 
   provisioner "shell" {
+    script = "./script.sh"
+  }
+
+  provisioner "shell" {
     inline = [
+      "sudo apt -y install nodejs npm mariadb-server mariadb-client",
       "sudo mkdir -p /opt/webapp",
       "sudo mv /tmp/webapp/* /opt/webapp/",
-      "sudo chown -R nobody:nogroup /opt/webapp"
+      "sudo chown -R nobody:nogroup /opt/webapp",
+      "cd /opt/webapp/",
+      "sudo npm i",
     ]
   }
 
@@ -83,9 +90,6 @@ build {
     ]
   }
 
-  provisioner "shell" {
-    script = "./script.sh"
-  }
 
   provisioner "shell" {
     inline = [
