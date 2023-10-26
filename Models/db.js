@@ -31,13 +31,13 @@ if (process.env.NODE_ENV !== 'envProd') {
     require('dotenv').config();
 }
 
-const DB_DATABASE = "csye6225";
-const DB_USERNAME = "csye6225";
-const DB_PASSWORD = "J8adestroyvQr#9zL4y";
-const DB_HOST = "csye6225-dbfcec3f7.cnrttrsz0ctr.us-east-1.rds.amazonaws.com";
+// const DB_DATABASE = "csye6225";
+// const DB_USERNAME = "csye6225";
+// const DB_PASSWORD = "J8adestroyvQr#9zL4y";
+// const DB_HOST = "csye6225-dbfcec3f7.cnrttrsz0ctr.us-east-1.rds.amazonaws.com";
 
-const sequelize = new Sequelize(DB_DATABASE, DB_USERNAME, DB_PASSWORD, {
-    host: DB_HOST,
+const sequelize = new Sequelize(process.env.DB_DATABASE, process.env.DB_USERNAME, process.env.DB_PASSWORD, {
+    host: process.env.DB_HOST,
     dialect: 'mysql',
     port: 3306,
 });
