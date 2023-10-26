@@ -1,152 +1,62 @@
+
 #!/bin/bash
 
-# Update and upgrade the system
-sudo apt update && sudo apt -y upgrade
+set -e # This will make the script exit if any command fails
 
-# Install lsof, a utility to list open files and ports
-sudo apt-get install -y lsof
+# Update the system
+sudo apt-get update -y
 
-# Check if Node.js is already installed and if so, remove it
-if command -v node > /dev/null 2>&1; then
-    sudo apt-get purge --auto-remove nodejs npm
-fi
+# Install Node.js and npm if they are not installed
+which node >/dev/null || ( curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash - && sudo apt-get install -y nodejs )
 
-# Install Node.js and npm from the nodesource repository for the latest version
-curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-sudo apt-get install -y nodejs
+# Environment variables for RDS instance
+export DB_HOST="csye6225-db191c4a9.cnrttrsz0ctr.us-east-1.rds.amazonaws.com" # Make sure this endpoint matches your actual RDS endpoint
+export DB_DATABASE="csye6225"
+export DB_USERNAME="csye6225"
+export DB_PASSWORD="J8adestroyvQr#9zL4y"
 
-# Ensure PATH is correctly set
-export PATH="$PATH:/usr/bin:/usr/local/bin"
+# Directory where web application code is present
+APP_DIR="/opt/webapp"
 
-# Check if Node.js was installed correctly
-if command -v node > /dev/null 2>&1; then
-    echo "Node.js is installed."
-    node -v
-else
-    echo "Node.js installation failed."
+if [ ! -d "$APP_DIR" ]; then
+    echo "$APP_DIR does not exist. You must first deploy your web app here."
     exit 1
 fi
 
-# Check if npm was installed correctly
-if command -v npm > /dev/null 2>&1; then
-    echo "npm is installed."
-    npm -v
-else
-    echo "npm installation failed."
-    exit 1
-fi
+cd "$APP_DIR"
 
-# Install sequelize globally (if needed in your case)
-npm install -g sequelize
+# Remove any previous node_modules directory
+[ -d "node_modules" ] && rm -rf node_modules
 
-# Install MariaDB server and client
-sudo apt-get install -y mariadb-server mariadb-client
+# Install npm dependencies
+echo "Installing npm packages..."
+npm install
 
-# Start and enable MariaDB
-sudo systemctl start mariadb
-sudo systemctl enable mariadb
+# Create a systemd service file
+echo "Creating a systemd service file for the web application..."
+cat > /etc/systemd/system/webapp.service <<EOF
+[Unit]
+Description=Web Application
+After=cloud-final.service
 
-# Check if MariaDB is running
-if ! sudo systemctl is-active --quiet mariadb; then
-    echo "MariaDB is not running. Exiting."
-    exit 1
-fi
+[Service]
+Environment=DB_HOST=$DB_HOST
+Environment=DB_DATABASE=$DB_DATABASE
+Environment=DB_USERNAME=$DB_USERNAME
+Environment=DB_PASSWORD=$DB_PASSWORD
+WorkingDirectory=$APP_DIR
+ExecStart=/usr/bin/node $APP_DIR/server.js
+Restart=always
+User=ubuntu # or another appropriate user
 
-# Create a database if it doesn't exist
-DB_NAME="projectDatabase"
+[Install]
+WantedBy=multi-user.target
+EOF
 
-if sudo mysql -u root -e "USE $DB_NAME" 2>/dev/null; then
-    echo "Database $DB_NAME already exists."
-else
-    echo "Creating database $DB_NAME..."
-    sudo mysql -u root -proot <<SQL
-CREATE DATABASE $DB_NAME;
-ALTER USER 'root'@'localhost' IDENTIFIED BY 'root';
-GRANT ALL PRIVILEGES ON $DB_NAME.* TO 'root'@'localhost' IDENTIFIED BY 'root';
-FLUSH PRIVILEGES;
-SHOW DATABASES;
-SQL
-    echo "Database $DB_NAME created."
-fi
+# Enable and start the web application service
+echo "Starting the web application service..."
+sudo systemctl daemon-reload
+sudo systemctl enable webapp.service
+sudo systemctl start webapp.service
 
-# Secure MariaDB installation
-# sudo mysql_secure_installation <<EOF
-
-# n
-# root
-# root
-# y
-# y
-# y
-# y
-# EOF
-
-# Ensure /opt/webapp directory exists and has the right permissions
-sudo mkdir -p /opt/webapp
-sudo chown -R $(whoami) /opt/webapp
-
-# Create the .env file in the /opt/webapp directory
-cat > /opt/webapp/.env <<EOL
-DB_HOST=localhost
-DB_USERNAME=root
-DB_PASSWORD=root
-DB_DATABASE=projectDatabase
-EOL
-
-# Change the owner of the .env file if necessary
-# This is assuming that your application might run as a different user
-sudo chown $(whoami) /opt/webapp/.env
-
-# Change to webapp directory, initialize npm (if package.json is absent), and install sequelize, mysql, and express using npm
-cd /opt/webapp || exit
-[ ! -f package.json ] && npm init -y
-npm install sequelize mysql express
-
-# Check express installation and exit if not found
-if [ ! -d "node_modules/express" ]; then
-    echo "Express installation failed. Exiting."
-    exit 1
-fi
-
-# # Check if port 8080 is in use, and if so, kill the process using it
-# if lsof -ti:8080 > /dev/null ; then
-#     echo "Port 8080 is in use, attempting to free it..."
-#     sudo lsof -ti:8080 | xargs sudo kill
-# fi
-
-# # Add Node.js app to startup using systemd
-# echo "[Unit]
-# Description=Node.js WebApp
-# After=network.target
-
-# [Service]
-# ExecStart=/usr/bin/node /opt/webapp/server.js
-# WorkingDirectory=/opt/webapp
-# StandardOutput=syslog
-# StandardError=syslog
-# Restart=always
-# User=nobody
-
-# [Install]
-# WantedBy=multi-user.target" | sudo tee /etc/systemd/system/webapp.service
-
-# # Reload systemd to recognize new service
-#   sudo systemctl daemon-reload
-
-# # Enable and start the new service
-# # sudo systemctl enable webapp.service
-# # sleep 3  # Delay to let system catch up
-# # sudo systemctl start webapp.service
-
-# # System Logs for Debugging: Add logs output if the service fails to start
-# if ! sudo systemctl is-active --quiet webapp.service; then
-#     echo "Service failed to start, here are the recent system logs:"
-#     sudo journalctl -xe
-#     exit 1
-# fi
-
-# # Clean up (remove unnecessary packages and clear cache)
-# sudo apt-get autoremove -y
-# sudo apt-get clean
-
-# End of the script
+echo "Setup completed successfully."

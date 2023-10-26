@@ -35,7 +35,7 @@ packer {
 }
 
 source "amazon-ebs" "webapp" {
-  profile       = var.aws_profile
+  profile       =   var.aws_profile
   ami_name      = "webapp-ami-${local.timestamp}"
   instance_type = var.instance_type
   region        = var.region
