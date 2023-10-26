@@ -41,7 +41,7 @@ jobs:
           path: path/to/your/artifact
 
       - name: Set up Packer
-        uses: hashicorp/setup-packer@v1
+        uses: hashicorp/setup-packer
         with:
           packer-version: '1.7.x'  # or the version you use
 
