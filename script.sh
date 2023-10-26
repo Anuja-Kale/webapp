@@ -1,62 +1,79 @@
+#!/bin/bash
+
+# Load environment variables from .env file
+# source .env
+
+# # Securely read the MySQL root password from an environment variable
+# if [ -z "$MYSQL_ROOT_PASSWORD" ]; then
+#   echo "MySQL root password not set. Exiting."
+#   exit 1
+# fi
+
+# # Set MySQL root password
+# mysql --user=root --password="$MYSQL_ROOT_PASSWORD" -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '$MYSQL_ROOT_PASSWORD';"
+
+# # Additional MySQL configuration commands
+# # For example, create a database and user
+# # mysql --user=root --password="$MYSQL_ROOT_PASSWORD" -e "CREATE DATABASE mydb;"
+# # mysql --user=root --password="$MYSQL_ROOT_PASSWORD" -e "CREATE USER 'myuser'@'localhost' IDENTIFIED BY 'mypassword';"
+# # mysql --user=root --password="$MYSQL_ROOT_PASSWORD" -e "GRANT ALL PRIVILEGES ON mydb.* TO 'myuser'@'localhost';"
+# # ...
+
+# # Restart MySQL service
+# sudo systemctl restart mysql
+
+
 
 #!/bin/bash
 
-set -e # This will make the script exit if any command fails
+# Update package repositories
+sudo apt-get update
 
-# Update the system
-sudo apt-get update -y
+# Install Node.js and npm
+curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+sudo apt-get install -y nodejs
 
-# Install Node.js and npm if they are not installed
-which node >/dev/null || ( curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash - && sudo apt-get install -y nodejs )
+# Install MariaDB
+sudo debconf-set-selections <<< 'mariadb-server-10.5 mysql-server/root_password password pwd'
+sudo debconf-set-selections <<< 'mariadb-server-10.5 mysql-server/root_password_again password pwd'
+sudo apt-get install -y mariadb-server
 
-# Environment variables for RDS instance
-export DB_HOST="csye6225-db191c4a9.cnrttrsz0ctr.us-east-1.rds.amazonaws.com" # Make sure this endpoint matches your actual RDS endpoint
-export DB_DATABASE="csye6225"
-export DB_USERNAME="csye6225"
-export DB_PASSWORD="J8adestroyvQr#9zL4y"
+# Start MariaDB service
+sudo systemctl start mysql
 
-# Directory where web application code is present
-APP_DIR="/opt/webapp"
+# Configure your web application here, e.g., copy application files, create databases, etc.
+# Initialize the web application database (if required)
+# Replace with your specific database setup commands
+# Example:
+# mysql -u root -p"your-root-password" -e "CREATE DATABASE webappdb;"
 
-if [ ! -d "$APP_DIR" ]; then
-    echo "$APP_DIR does not exist. You must first deploy your web app here."
-    exit 1
-fi
+# Optionally, you can include additional application-specific setup steps here.
 
-cd "$APP_DIR"
 
-# Remove any previous node_modules directory
-[ -d "node_modules" ] && rm -rf node_modules
+# Enable MariaDB to start on boot
+sudo systemctl enable mysql
 
-# Install npm dependencies
-echo "Installing npm packages..."
-npm install
+# Secure MariaDB installation (set root password and remove anonymous users)
+sudo mysql_secure_installation <<EOF
 
-# Create a systemd service file
-echo "Creating a systemd service file for the web application..."
-cat > /etc/systemd/system/webapp.service <<EOF
-[Unit]
-Description=Web Application
-After=cloud-final.service
-
-[Service]
-Environment=DB_HOST=$DB_HOST
-Environment=DB_DATABASE=$DB_DATABASE
-Environment=DB_USERNAME=$DB_USERNAME
-Environment=DB_PASSWORD=$DB_PASSWORD
-WorkingDirectory=$APP_DIR
-ExecStart=/usr/bin/node $APP_DIR/server.js
-Restart=always
-User=ubuntu # or another appropriate user
-
-[Install]
-WantedBy=multi-user.target
+pwd
+n
+n
+y
+y
+y
+y
 EOF
 
-# Enable and start the web application service
-echo "Starting the web application service..."
-sudo systemctl daemon-reload
-sudo systemctl enable webapp.service
-sudo systemctl start webapp.service
+# Additional configurations and setup for your web application can be added here.
 
-echo "Setup completed successfully."
+# Restart MariaDB for changes to take effect
+sudo systemctl restart mysql
+
+# Optionally, you can add more configuration steps for your specific web application.
+
+# Clean up (remove unnecessary packages and clear cache)
+sudo apt-get autoremove -y
+sudo apt-get clean
+
+# End of the script
