@@ -1,3 +1,4 @@
+
 #!/bin/bash
 
 set -e # This will make the script exit if any command fails
@@ -9,7 +10,7 @@ sudo apt-get update -y
 which node >/dev/null || ( curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash - && sudo apt-get install -y nodejs )
 
 # Environment variables for RDS instance
-export DB_HOST="csye6225-db16d9b53.cnrttrsz0ctr.us-east-1.rds.amazonaws.com"
+export DB_HOST="csye6225-db191c4a9.cnrttrsz0ctr.us-east-1.rds.amazonaws.com" # Make sure this endpoint matches your actual RDS endpoint
 export DB_DATABASE="csye6225"
 export DB_USERNAME="csye6225"
 export DB_PASSWORD="J8adestroyvQr#9zL4y"
@@ -36,7 +37,7 @@ echo "Creating a systemd service file for the web application..."
 cat > /etc/systemd/system/webapp.service <<EOF
 [Unit]
 Description=Web Application
-After=network.target cloud-final.service
+After=cloud-final.service
 
 [Service]
 Environment=DB_HOST=$DB_HOST
@@ -46,7 +47,7 @@ Environment=DB_PASSWORD=$DB_PASSWORD
 WorkingDirectory=$APP_DIR
 ExecStart=/usr/bin/node $APP_DIR/server.js
 Restart=always
-User=ubuntu
+User=ubuntu # or another appropriate user
 
 [Install]
 WantedBy=multi-user.target
