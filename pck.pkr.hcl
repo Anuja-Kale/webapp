@@ -79,6 +79,12 @@ build {
       "sudo chown -R nobody:nogroup /opt/webapp",
       "cd /opt/webapp/",
       "sudo npm i",
+      "sudo adduser ec2-user",
+      "sudo usermod -aG ec2-user ec2-user",
+      "sudo chmod +x /opt/webapp/server.js",
+      "sudo mv /opt/webapp/rds.Service /etc/systemd/system/",
+      "sudo systemctl daemon-reload",
+      "sudo systemctl enable rds",
     ]
   }
 
