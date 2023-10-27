@@ -82,7 +82,7 @@ build {
       "sudo adduser ec2-user",
       "sudo usermod -aG ec2-user ec2-user",
       "sudo chmod +x /opt/webapp/server.js",
-      "sudo mv /opt/webapp/rds.Service /etc/systemd/system/",
+      "sudo mv /opt/webapp/rds.service /etc/systemd/system/",
       "sudo systemctl daemon-reload",
       "sudo systemctl enable rds",
     ]
