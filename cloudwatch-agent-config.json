@@ -22,5 +22,28 @@
       "append_dimensions": {
         "InstanceId": "${aws:InstanceId}"
       }
+    },
+    "logs": {
+      "logs_collected": {
+        "files": {
+          "collect_list": [
+            {
+              "file_path": "/var/log/application.log",
+              "log_group_name": "application-log-group",
+              "log_stream_name": "{instance_id}/application.log",
+              "timezone": "Local"
+            },
+            {
+              "file_path": "/var/log/another-app.log",
+              "log_group_name": "another-app-log-group",
+              "log_stream_name": "{instance_id}/another-app.log",
+              "timezone": "Local"
+            }
+          ]
+        }
+      },
+      "log_stream_name": "my_log_stream_name",
+      "force_flush_interval": 15
     }
-  }  
+  }
+  
