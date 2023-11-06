@@ -35,13 +35,13 @@ packer {
 }
 
 source "amazon-ebs" "webapp" {
-  profile       = var.aws_profile
-  ami_name      = "webapp-ami-${local.timestamp}"
-  instance_type = var.instance_type
-  region        = var.region
-  source_ami    = "ami-06db4d78cb1d3bbf9"
-  ssh_username  = var.ssh_username
-  ami_users     = ["057915486037", "822421370804"]
+  profile        = var.aws_profile
+  ami_name       = "webapp-ami-${local.timestamp}"
+  instance_type  = var.instance_type
+  region         = var.region
+  source_ami     = "ami-06db4d78cb1d3bbf9"
+  ssh_username   = var.ssh_username
+  ami_users      = ["057915486037", "822421370804"]
   ssh_agent_auth = false
 }
 
@@ -68,10 +68,45 @@ build {
   }
 
   provisioner "shell" {
+    script = "./script.sh"
+  }
+
+  // Install CloudWatch Agent
+  provisioner "shell" {
     inline = [
+      "curl -O https://s3.amazonaws.com/amazoncloudwatch-agent/debian/amd64/latest/amazon-cloudwatch-agent.deb",
+      "sudo dpkg -i -E ./amazon-cloudwatch-agent.deb"
+    ]
+  }
+
+  // Upload and configure CloudWatch Agent
+  provisioner "file" {
+    source      = "cloudwatch-agent-config.json"
+    destination = "/tmp/cloudwatch-agent-config.json"
+  }
+
+  provisioner "shell" {
+    inline = [
+      "sudo mv /tmp/cloudwatch-agent-config.json /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json",
+      "sudo systemctl enable amazon-cloudwatch-agent",
+      "sudo systemctl start amazon-cloudwatch-agent"
+    ]
+  }
+
+  provisioner "shell" {
+    inline = [
+      "sudo apt -y install nodejs npm mariadb-server mariadb-client",
       "sudo mkdir -p /opt/webapp",
       "sudo mv /tmp/webapp/* /opt/webapp/",
-      "sudo chown -R nobody:nogroup /opt/webapp"
+      "sudo chown -R nobody:nogroup /opt/webapp",
+      "cd /opt/webapp/",
+      "sudo npm i",
+      "sudo adduser ec2-user",
+      "sudo usermod -aG ec2-user ec2-user",
+      "sudo chmod +x /opt/webapp/server.js",
+      "sudo mv /opt/webapp/rds.service /etc/systemd/system/",
+      "sudo systemctl daemon-reload",
+      "sudo systemctl enable rds",
     ]
   }
 
@@ -81,10 +116,6 @@ build {
       "sudo apt-get update",
       "sudo apt-get install -y mariadb-server mariadb-client"
     ]
-  }
-
-  provisioner "shell" {
-    script = "./script.sh"
   }
 
   provisioner "shell" {
