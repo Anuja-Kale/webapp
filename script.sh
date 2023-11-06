@@ -1,31 +1,5 @@
 #!/bin/bash
 
-# Load environment variables from .env file
-# source .env
-
-# # Securely read the MySQL root password from an environment variable
-# if [ -z "$MYSQL_ROOT_PASSWORD" ]; then
-#   echo "MySQL root password not set. Exiting."
-#   exit 1
-# fi
-
-# # Set MySQL root password
-# mysql --user=root --password="$MYSQL_ROOT_PASSWORD" -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '$MYSQL_ROOT_PASSWORD';"
-
-# # Additional MySQL configuration commands
-# # For example, create a database and user
-# # mysql --user=root --password="$MYSQL_ROOT_PASSWORD" -e "CREATE DATABASE mydb;"
-# # mysql --user=root --password="$MYSQL_ROOT_PASSWORD" -e "CREATE USER 'myuser'@'localhost' IDENTIFIED BY 'mypassword';"
-# # mysql --user=root --password="$MYSQL_ROOT_PASSWORD" -e "GRANT ALL PRIVILEGES ON mydb.* TO 'myuser'@'localhost';"
-# # ...
-
-# # Restart MySQL service
-# sudo systemctl restart mysql
-
-
-
-#!/bin/bash
-
 # Update package repositories
 sudo apt-get update
 
@@ -47,8 +21,17 @@ sudo systemctl start mysql
 # Example:
 # mysql -u root -p"your-root-password" -e "CREATE DATABASE webappdb;"
 
-# Optionally, you can include additional application-specific setup steps here.
+# Install the CloudWatch Agent
+wget https://s3.amazonaws.com/amazoncloudwatch-agent/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb
+sudo dpkg -i -E ./amazon-cloudwatch-agent.deb
 
+# Assuming the CloudWatch Agent configuration file is named `cloudwatch-agent-config.json`
+# and is located in the root directory of your project.
+sudo cp ./cloudwatch-agent-config.json /opt/aws/amazon-cloudwatch-agent/etc/
+
+# Start the CloudWatch Agent
+sudo systemctl enable amazon-cloudwatch-agent
+sudo systemctl start amazon-cloudwatch-agent
 
 # Enable MariaDB to start on boot
 sudo systemctl enable mysql
