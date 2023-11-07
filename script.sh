@@ -8,18 +8,22 @@ curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
 sudo apt-get install -y nodejs
 
 # Install MariaDB
-sudo debconf-set-selections <<< 'mariadb-server-10.5 mysql-server/root_password password pwd'
-sudo debconf-set-selections <<< 'mariadb-server-10.5 mysql-server/root_password_again password pwd'
+sudo debconf-set-selections <<< 'mariadb-server mysql-server/root_password password pwd'
+sudo debconf-set-selections <<< 'mariadb-server mysql-server/root_password_again password pwd'
 sudo apt-get install -y mariadb-server
 
 # Start MariaDB service
 sudo systemctl start mysql
 
-# Configure your web application here, e.g., copy application files, create databases, etc.
+# Install npm dependencies for your project, including aws-sdk
+# Replace '/path/to/your/node/app' with the actual path to your Node.js application
+cd /path/to/your/node/app
+npm install aws-sdk
+
 # Initialize the web application database (if required)
 # Replace with your specific database setup commands
 # Example:
-# mysql -u root -p"your-root-password" -e "CREATE DATABASE webappdb;"
+# mysql -u root -p"pwd" -e "CREATE DATABASE webappdb;"
 
 # Install the CloudWatch Agent
 wget https://s3.amazonaws.com/amazoncloudwatch-agent/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb
@@ -48,12 +52,8 @@ y
 y
 EOF
 
-# Additional configurations and setup for your web application can be added here.
-
 # Restart MariaDB for changes to take effect
 sudo systemctl restart mysql
-
-# Optionally, you can add more configuration steps for your specific web application.
 
 # Clean up (remove unnecessary packages and clear cache)
 sudo apt-get autoremove -y
