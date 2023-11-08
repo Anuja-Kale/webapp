@@ -3,7 +3,7 @@
 const fs = require('fs').promises;
 const path = require('path');
 const csvParser = require('papaparse');
-const { User } = require('../Models/User');
+const { User } = require('../Models/user');
 const sequelize = require('../Models/db');
 const User1 = sequelize.models.User;
 const bcrypt = require('bcrypt');

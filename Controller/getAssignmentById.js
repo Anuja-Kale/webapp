@@ -1,5 +1,5 @@
-const  Assignment1  = require('../Models/Assignment');
-const User = require('../Models/User');  // Using the model file you've shared
+const  Assignment1  = require('../Models/assignment');
+const User = require('../Models/user');  // Using the model file you've shared
 const sequelize = require('../Models/db');
 
 exports.getAssignmentById = async (req, res) => {
