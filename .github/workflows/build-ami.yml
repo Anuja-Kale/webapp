@@ -41,7 +41,7 @@ jobs:
           path: path/to/your/artifact
 
       - name: Set up Packer
-        uses: hashicorp/setup-packer@v1
+        uses: hashicorp/setup-packer@main
         with:
           packer-version: '1.7.x'  # or the version you use
 
@@ -58,6 +58,3 @@ jobs:
 
       - name: Build AMI
         run: packer build pck.pkr.hcl
-
-
-
