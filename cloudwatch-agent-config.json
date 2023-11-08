@@ -1,0 +1,43 @@
+{
+    "agent": {
+      "metrics_collection_interval": 60,
+      "run_as_user": "cwagent"
+    },
+    "metrics": {
+      "metrics_collected": {
+        "mem": {
+          "measurement": [
+            "mem_used_percent"
+          ]
+        },
+        "disk": {
+          "measurement": [
+            "used_percent"
+          ],
+          "resources": [
+            "/"
+          ]
+        }
+      },
+      "append_dimensions": {
+        "InstanceId": "${aws:InstanceId}"
+      }
+    },
+    "logs": {
+      "logs_collected": {
+        "files": {
+          "collect_list": [
+            {
+              "file_path": "/var/log/myapp/application.log",
+              "log_group_name": "application-log-group",
+              "log_stream_name": "{instance_id}/application.log",
+              "timezone": "Local"
+            }
+          ]
+        }
+      },
+      "log_stream_name": "my_log_stream_name",
+      "force_flush_interval": 15
+    }
+  }
+  

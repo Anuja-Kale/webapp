@@ -71,6 +71,28 @@ build {
     script = "./script.sh"
   }
 
+  // Install CloudWatch Agent
+  provisioner "shell" {
+    inline = [
+      "curl -O https://s3.amazonaws.com/amazoncloudwatch-agent/debian/amd64/latest/amazon-cloudwatch-agent.deb",
+      "sudo dpkg -i -E ./amazon-cloudwatch-agent.deb"
+    ]
+  }
+
+  // Upload and configure CloudWatch Agent
+  provisioner "file" {
+    source      = "cloudwatch-agent-config.json"
+    destination = "/tmp/cloudwatch-agent-config.json"
+  }
+
+  provisioner "shell" {
+    inline = [
+      "sudo mv /tmp/cloudwatch-agent-config.json /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json",
+      "sudo systemctl enable amazon-cloudwatch-agent",
+      "sudo systemctl start amazon-cloudwatch-agent"
+    ]
+  }
+
   provisioner "shell" {
     inline = [
       "sudo apt -y install nodejs npm mariadb-server mariadb-client",
@@ -95,7 +117,6 @@ build {
       "sudo apt-get install -y mariadb-server mariadb-client"
     ]
   }
-
 
   provisioner "shell" {
     inline = [
