@@ -21,16 +21,21 @@ cd /opt/webapp
 npm install aws-sdk
 
 # Initialize the web application database (if required)
-# Replace with your specific database setup commands
-# Example:
 mysql -u root -proot1234 -e "CREATE DATABASE IF NOT EXISTS webappdb;"
 
 # Install the CloudWatch Agent
 wget https://s3.amazonaws.com/amazoncloudwatch-agent/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb
 sudo dpkg -i -E ./amazon-cloudwatch-agent.deb
 
-# Assuming the CloudWatch Agent configuration file is named `cloudwatch-agent-config.json`
-# and is located in the root directory of your project.
+# Create a directory for application logs
+sudo mkdir -p /var/log/myapp
+sudo chown $USER:$USER /var/log/myapp
+sudo chmod 755 /var/log/myapp
+
+# Ensure the application writes its logs to /var/log/myapp/application.log
+# You need to configure your Node.js application separately to make sure it writes logs to this file.
+
+# Copy the CloudWatch Agent configuration file to the CloudWatch directory
 sudo cp ./cloudwatch-agent-config.json /opt/aws/amazon-cloudwatch-agent/etc/
 
 # Start the CloudWatch Agent
