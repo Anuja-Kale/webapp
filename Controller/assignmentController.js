@@ -1,5 +1,5 @@
 // Importing necessary modules
-const { Assignment } = require('../Models/assignment'); // Importing the Assignment model
+const { Assignment } = require('../Models/Assignment'); // Importing the Assignment model
 const sequelize = require('../Models/db');               // Importing the Sequelize database connection
 
 // Exporting the createAssignment function

@@ -3,8 +3,8 @@ const app = require('./app'); // Import the 'app' module
 const sequelize = require('./Models/db'); // Import the Sequelize instance
 const loadUsersFromCSV = require('./Utils/csvLoaders'); // Import a CSV loading utility
 const processUsers = require('./Utils/processUsers'); // Import a utility to process users
-const User = require('./Models/user'); // Import the User model
-const Assignment = require('./Models/assignment'); // Import the Assignment model
+const User = require('./Models/User'); // Import the User model
+const Assignment = require('./Models/Assignment'); // Import the Assignment model
 const PORT = 8080; // Define the port number for the server to listen on
 
 // Define the association between User and Assignment models
