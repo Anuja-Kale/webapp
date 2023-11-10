@@ -25,7 +25,9 @@
     "mysql": "^2.18.1",
     "mysql2": "^3.6.1",
     "papaparse": "^5.4.1",
-    "sequelize": "^6.33.0"
+    "sequelize": "^6.33.0",
+    "winston": "^3.11.0",
+    "winston-cloudwatch": "^6.2.0"
   },
   "devDependencies": {
     "supertest": "^6.3.3"

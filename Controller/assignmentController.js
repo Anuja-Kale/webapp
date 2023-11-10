@@ -1,7 +1,7 @@
 // Importing necessary modules
 const { Assignment } = require('../Models/assignment'); // Importing the Assignment model
 const sequelize = require('../Models/db');               // Importing the Sequelize database connection
-
+const logger = require('../Utils/logger');
 // Exporting the createAssignment function
 exports.createAssignment = async (req, res) => {
     try {
@@ -16,6 +16,7 @@ exports.createAssignment = async (req, res) => {
         // Checking if all required fields are present in the request body
         // If any field is missing, respond with a 400 Bad Request error
         if (!name || !points || !num_of_attempts || !deadline) {
+            logger.error("Invaild Input")
             return res.status(400).json({ message: 'Invalid input: All fields are required' });
         }
 
