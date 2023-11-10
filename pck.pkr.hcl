@@ -83,7 +83,7 @@ build {
   }
 
   provisioner "file" {
-    source      = "./cloudwatch-agent-config.json"
+    source      = "cloudwatch-agent-config.json"
     destination = "/tmp/webapp/cloudwatch-agent-config.json"
   }
 
