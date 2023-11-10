@@ -74,8 +74,11 @@ build {
   // Install CloudWatch Agent
   provisioner "shell" {
     inline = [
-      "curl -O https://s3.amazonaws.com/amazoncloudwatch-agent/debian/amd64/latest/amazon-cloudwatch-agent.deb",
-      "sudo dpkg -i -E ./amazon-cloudwatch-agent.deb"
+      #"curl -O https://s3.amazonaws.com/amazoncloudwatch-agent/debian/amd64/latest/amazon-cloudwatch-agent.deb",
+     #"sudo dpkg -i -E ./amazon-cloudwatch-agent.deb"
+     "sudo wget https://s3.amazonaws.com/amazoncloudwatch-agent/debian/amd64/latest/amazon-cloudwatch-agent.deb",
+     "sudo dpkg -i -E ./amazon-cloudwatch-agent.deb",
+
     ]
   }
 
