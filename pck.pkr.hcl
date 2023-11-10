@@ -80,15 +80,15 @@ build {
   }
 
   // Upload and configure CloudWatch Agent
-  provisioner "file" {
-    source      = "cloudwatch-agent-config.json"
-    destination = "/tmp/cloudwatch-agent-config.json"
-  }
+  #provisioner "file" {
+  # source      = "/webapp/cloudwatch-agent-config.json"
+  #destination = "/tmp/webapp/cloudwatch-agent-config.json"
+  #}
 
   provisioner "shell" {
     inline = [
-      #"sudo mv /tmp/cloudwatch-agent-config.json /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json",
-      "sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/tmp/cloudwatch-agent-config.json -s",
+      #"sudo mv /tmp/webapp/cloudwatch-agent-config.json /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json",
+      "sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/tmp/webapp/cloudwatch-agent-config.json -s",
       "sudo systemctl enable amazon-cloudwatch-agent",
       "sudo systemctl start amazon-cloudwatch-agent"
     ]
