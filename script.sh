@@ -35,12 +35,12 @@ sudo chmod 755 /var/log/myapp
 # Ensure the application writes its logs to /var/log/myapp/application.log
 # You need to configure your Node.js application separately to make sure it writes logs to this file.
 
-# Copy the CloudWatch Agent configuration file to the CloudWatch directory
-sudo cp ./cloudwatch-agent-config.json /opt/aws/amazon-cloudwatch-agent/etc/
+# # Copy the CloudWatch Agent configuration file to the CloudWatch directory
+# sudo cp ./cloudwatch-agent-config.json /opt/aws/amazon-cloudwatch-agent/etc/
 
-# Start the CloudWatch Agent
-sudo systemctl enable amazon-cloudwatch-agent
-sudo systemctl start amazon-cloudwatch-agent
+# # Start the CloudWatch Agent
+# sudo systemctl enable amazon-cloudwatch-agent
+# sudo systemctl start amazon-cloudwatch-agent
 
 # Enable MariaDB to start on boot
 sudo systemctl enable mariadb
