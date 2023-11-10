@@ -13,6 +13,7 @@ const { getAssignmentById } = require('./Controller/getAssignmentById');
 const { getAllAssignments } = require('./Controller/getAllAssignments');
 const { deleteAssignmentById } = require('./Controller/deleteAssignmentById');
 const { updateAssignmentById } = require('./Controller/updateAssignmentById');
+const logger = require('./Utils/logger');
 
 
 const app = express();
@@ -61,7 +62,7 @@ app.get('/healthz', async (req, res) => {
   try {
     console.log('healthz')
     await sequelize.authenticate(); // Check the database connectivity
-    
+    logger.info("Connected to DB")
     res.status(200).set({
       'Cache-Control': 'no-cache, no-store, must-revalidate',
       'Pragma': 'no-cache',
@@ -70,6 +71,7 @@ app.get('/healthz', async (req, res) => {
 
   } catch (error) {
     console.error('Unable to connect to the database:', error);
+    logger.error("Connection error")
 
     res.status(503).set({
       'Cache-Control': 'no-cache, no-store, must-revalidate',

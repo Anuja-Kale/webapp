@@ -1,5 +1,6 @@
 const express = require('express');
 const pool = require('../Models/db');
+const logger = require('../Utils/logger');
 
 function checkHealth(req, res, next) {
     if (req.method !== 'GET') {
@@ -18,6 +19,7 @@ function checkHealth(req, res, next) {
       // if (Object.keys(req.query).length > 0 || Object.keys(req.body).length > 0) {
       console.log(req.body)
       if (Object.keys(req.query).length > 0 || ( req.body && Object.keys(req.body).length > 0))  {
+        logger.error("Invaild Input")
       res.status(400).json();
       return;
     }
