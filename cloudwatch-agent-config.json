@@ -17,7 +17,13 @@
           "resources": [
             "/"
           ]
-        }
+        },
+        "metrics_collected":{
+            "statsd":{
+               "service_address":":8125",
+               "metrics_collection_interval":15,
+               "metrics_aggregation_interval":300
+            }
       },
       "append_dimensions": {
         "InstanceId": "${aws:InstanceId}"
@@ -39,5 +45,7 @@
       "log_stream_name": "my_log_stream_name",
       "force_flush_interval": 15
     }
+     
+     }
   }
   
