@@ -10,7 +10,7 @@ describe('GET /healthz', () => {
       .expect('X-Content-Type-Options', 'nosniff')
       .expect(200)
       .then((response) => {
-        expect(response.body).toEqual({});
+        expect(response.body).toEqual({status: 'ok'});
       });
   });
 
