@@ -21,25 +21,37 @@ require('dotenv').config();
 // );
 // module.exports = sequelize
 
-
-//const Sequelize = require('sequelize');
-// require('dotenv').config(); // You can uncomment this if you're using dotenv for environment variables
-
 const Sequelize = require('sequelize');
-// require('dotenv').config(); // If you're using dotenv, you can uncomment this line
+
+// Load environment variables from .env file if not in production
 if (process.env.NODE_ENV !== 'envProd') {
     require('dotenv').config();
 }
 
-// const DB_DATABASE = "csye6225";
-// const DB_USERNAME = "csye6225";
-// const DB_PASSWORD = "J8adestroyvQr#9zL4y";
-// const DB_HOST = "csye6225-dbfcec3f7.cnrttrsz0ctr.us-east-1.rds.amazonaws.com";
+// Logging the environment variables (for development purposes only, not safe in production for sensitive data)
+console.log("---------")
+console.log(process.env.NODE_ENV);
+console.log(process.env.DB_USERNAME);
+console.log(process.env.DB_DATABASE);
+console.log(process.env.DB_PASSWORD);
+console.log(process.env.DB_HOST);
+console.log(process.env.awsAccessKeyId);
+console.log("---------")
 
 const sequelize = new Sequelize(process.env.DB_DATABASE, process.env.DB_USERNAME, process.env.DB_PASSWORD, {
     host: process.env.DB_HOST,
     dialect: 'mysql',
     port: 3306,
 });
+
+// Testing the connection
+sequelize
+  .authenticate()
+  .then(() => {
+    console.log('Connection has been established successfully.');
+  })
+  .catch(err => {
+    console.error('Unable to connect to the database:', err);
+  });
 
 module.exports = sequelize;

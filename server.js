@@ -3,51 +3,11 @@ const app = require('./app'); // Import the 'app' module
 const sequelize = require('./Models/db'); // Import the Sequelize instance
 const loadUsersFromCSV = require('./Utils/csvLoaders'); // Import a CSV loading utility
 const processUsers = require('./Utils/processUsers'); // Import a utility to process users
-const AWS = require('aws-sdk'); // Import the AWS SDK
-const PORT = 8080; // Define the port number for the server to listen on
-
-// Configure AWS CloudWatch
-AWS.config.update({ region: 'us-east-1' });
-const cloudwatch = new AWS.CloudWatch();
-
-// CloudWatch functions to track API calls
-function incrementCallCount(apiName) {
-    const params = {
-        MetricData: [
-            {
-                MetricName: 'API Calls',
-                Dimensions: [
-                    {
-                        Name: 'APIName',
-                        Value: apiName
-                    },
-                ],
-                Unit: 'Count',
-                Value: 1
-            },
-        ],
-        Namespace: 'ExampleApp/ApiCalls'
-    };
-
-    cloudwatch.putMetricData(params, (err, data) => {
-        if (err) console.log("Error putting metric data", err);
-        else console.log("Metric data put success", data);
-    });
-}
-
-// Middleware to track API calls
-function apiCallTracker(req, res, next) {
-    const apiName = req.baseUrl + req.path;
-    incrementCallCount(apiName);
-    next();
-}
-
-// Apply the middleware to all incoming requests
-app.use(apiCallTracker);
-
-// Define the association between User and Assignment models
 const User = require('./Models/user'); // Import the User model
 const Assignment = require('./Models/assignment'); // Import the Assignment model
+const PORT = 8080; // Define the port number for the server to listen on
+
+// Define the association between User and Assignment models
 User.hasMany(Assignment, { foreignKey: 'userId', as: 'assignments' });
 Assignment.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 
@@ -66,4 +26,3 @@ sequelize.sync()
         // Handle any errors that occur during the process
         console.error("Error:", err);
     });
-

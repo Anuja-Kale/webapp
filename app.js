@@ -62,18 +62,11 @@ app.get('/healthz', async (req, res) => {
     console.log('healthz')
     await sequelize.authenticate(); // Check the database connectivity
     
-    // res.status(200).set({
-    //   'Cache-Control': 'no-cache, no-store, must-revalidate',
-    //   'Pragma': 'no-cache',
-    //   'X-Content-Type-Options': 'nosniff'
-    // }).json({ status: 'ok' });
-
     res.status(200).set({
       'Cache-Control': 'no-cache, no-store, must-revalidate',
       'Pragma': 'no-cache',
       'X-Content-Type-Options': 'nosniff'
-    }).json({});
-    
+    }).json({ status: 'ok' });
 
   } catch (error) {
     console.error('Unable to connect to the database:', error);
@@ -87,3 +80,19 @@ app.get('/healthz', async (req, res) => {
 });
 
 module.exports = app;
+
+
+
+
+
+
+
+// Users.sync().then(result =>{
+//   console.log(result)
+// }).catch(error => {
+//   console.error("Error syncing User Model with database:", error);
+// });
+
+// app.listen(PORT, () => {
+//   console.log(`Server started on http://localhost:${PORT}`);
+// });
