@@ -113,6 +113,7 @@ build {
       "sudo systemctl enable amazon-cloudwatch-agent",
       "sudo systemctl start amazon-cloudwatch-agent",
       "sudo chown -R ec2-user:ec2-user /opt/webapp",
+      "sudo chmod -R 750 /opt/webapp/*"
     ]
   }
 
