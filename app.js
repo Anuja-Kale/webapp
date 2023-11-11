@@ -14,7 +14,7 @@ const { getAllAssignments } = require('./Controller/getAllAssignments');
 const { deleteAssignmentById } = require('./Controller/deleteAssignmentById');
 const { updateAssignmentById } = require('./Controller/updateAssignmentById');
 const logger = require('./Utils/logger');
-//const StatsDD = require('./Utils/StatsD_client');
+const statsd = require('./Utils/StatsD_client');
 
 const app = express();
 const PORT = 8080;
@@ -60,7 +60,13 @@ app.put('/api/assignment/:id', basicAuth, (req, res, next) => {
 
 app.get('/healthz', async (req, res) => {
   try {
-    // StatsDD.increment('api.request.count');
+    //await StatsD.increment('endpoint.hit.v1.healthZ.Check');
+
+    try {
+      statsd.increment('api.request.count');
+    } catch (statsdError) {
+      console.error('Error with StatsD:', statsdError);
+    }
     console.log('healthz')
     await sequelize.authenticate(); // Check the database connectivity
     logger.info("Connected to DB")
