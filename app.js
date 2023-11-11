@@ -71,7 +71,7 @@ app.get('/healthz', async (req, res) => {
     }).json({ status: 'ok' });
 
   } catch (error) {
-    console.error('Unable to connect to the database:', error);
+    //console.error('Unable to connect to the database:', error);
     logger.error("Connection error")
 
     res.status(503).set({
