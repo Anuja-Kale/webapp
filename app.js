@@ -14,7 +14,7 @@ const { getAllAssignments } = require('./Controller/getAllAssignments');
 const { deleteAssignmentById } = require('./Controller/deleteAssignmentById');
 const { updateAssignmentById } = require('./Controller/updateAssignmentById');
 const logger = require('./Utils/logger');
-const StatsD = require('./Utils/StatsD_client');
+const statsd = require('./Utils/StatsD_client');
 
 const app = express();
 const PORT = 8080;
@@ -61,8 +61,9 @@ app.put('/api/assignment/:id', basicAuth, (req, res, next) => {
 app.get('/healthz', async (req, res) => {
   try {
     //await StatsD.increment('endpoint.hit.v1.healthZ.Check');
+
     try {
-      StatsD.increment('api.request.count');
+      statsd.increment('api.request.count');
     } catch (statsdError) {
       console.error('Error with StatsD:', statsdError);
     }
