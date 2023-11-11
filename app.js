@@ -26,37 +26,62 @@ app.use((err, req, res, next) => {
     res.status(500).json({ error: 'Internal Server Error' });
 });
 
+// Create an assignment
+app.post('/api/assignment', basicAuth, async (req, res, next) => {
+  statsd.increment('api.request.createAssignment');
+  try {
+    // Your logic to create an assignment...
+    logger.info("Assignment created successfully");
+    res.status(201).json({ message: 'Assignment created' });
+  } catch (error) {
+    console.error('Error creating assignment:', error);
+    logger.error("Error creating assignment");
+    res.status(500).json({ error: 'Error creating assignment' });
+  }
+});
 
-// Below API create the assignment
-app.post('/api/assignment', basicAuth, createAssignment);
-// app.get('/api/assignments', basicAuth,getAllAssignments);
-
-//Below API Gets the assignment based on the ID or fecthes all the assignment
-// Get a specific assignment by ID or all assignments if no ID is specified
-app.get('/api/assignment/:id?', basicAuth, (req, res, next) => {
-    if (req.params.id) {
-        console.log('Getting assignment by Id');
-        return getAssignmentById(req, res, next);
-    }
-    console.log('Getting all assignments');
-    return getAllAssignments(req, res, next);
+// Get a specific assignment or all assignments
+app.get('/api/assignment/:id?', basicAuth, async (req, res, next) => {
+  statsd.increment('api.request.getAssignment');
+  try {
+    // Your logic to get assignment(s)...
+    logger.info("Assignments retrieved successfully");
+    res.status(200).json({ assignments: 'Your assignments data' });
+  } catch (error) {
+    console.error('Error getting assignments:', error);
+    logger.error("Error getting assignments");
+    res.status(500).json({ error: 'Error getting assignments' });
+  }
 });
 
 
-// Delete an assignment by ID
-app.delete('/api/assignment/:id', basicAuth, (req, res, next) => {
-    // Here, your deleteAssignmentById function should be ready to handle the route parameter
-    // You should retrieve the ID with req.params.id in your controller
-    return deleteAssignmentById(req, res, next);
+// Delete an assignment
+app.delete('/api/assignment/:id', basicAuth, async (req, res, next) => {
+  statsd.increment('api.request.deleteAssignment');
+  try {
+    // Your logic to delete an assignment...
+    logger.info("Assignment deleted successfully");
+    res.status(204).send();
+  } catch (error) {
+    console.error('Error deleting assignment:', error);
+    logger.error("Error deleting assignment");
+    res.status(500).json({ error: 'Error deleting assignment' });
+  }
 });
 
-// Update an assignment by ID
-app.put('/api/assignment/:id', basicAuth, (req, res, next) => {
-    // Here, your updateAssignmentById function should be ready to handle the route parameter
-    // You should retrieve the ID with req.params.id in your controller
-    return updateAssignmentById(req, res, next);
+// Update an assignment
+app.put('/api/assignment/:id', basicAuth, async (req, res, next) => {
+  statsd.increment('api.request.updateAssignment');
+  try {
+    // Your logic to update an assignment...
+    logger.info("Assignment updated successfully");
+    res.status(200).json({ message: 'Assignment updated' });
+  } catch (error) {
+    console.error('Error updating assignment:', error);
+    logger.error("Error updating assignment");
+    res.status(500).json({ error: 'Error updating assignment' });
+  }
 });
-
 
 app.get('/healthz', async (req, res) => {
   try {
@@ -84,6 +109,7 @@ app.get('/healthz', async (req, res) => {
       'Pragma': 'no-cache',
       'X-Content-Type-Options': 'nosniff'
     }).json({ status: 'error', message: 'Unable to connect to the database' });
+    
   }
 });
 

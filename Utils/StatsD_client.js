@@ -11,7 +11,7 @@ const { StatsD } = require('hot-shots');
 const statsd = new StatsD({
   host: 'localhost',
   port: 8125,
-  prefix: 'yourapp.',
+  prefix: 'webapp',
   globalTags: { environment: process.env.NODE_ENV },
 });
 
