@@ -89,7 +89,7 @@ build {
     ]
   }
 
-    // Install CloudWatch Agent
+  // Install CloudWatch Agent
   provisioner "shell" {
     inline = [
       #"curl -O https://s3.amazonaws.com/amazoncloudwatch-agent/debian/amd64/latest/amazon-cloudwatch-agent.deb",
@@ -108,10 +108,12 @@ build {
   provisioner "shell" {
     inline = [
       # "sudo mv /tmp/webapp/cloudwatch-agent-config.json /opt/aws/amazon-cloudwatch-agent/etc/",/opt/aws/amazon-cloudwatch-agent/etc/cloudwatch-agent-config.json
-      "sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/opt/webapp/cloudwatch-agent-config.json -s",
+      # "sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/opt/webapp/cloudwatch-agent-config.json -s",
+      "sudo mv /tmp/webapp/cloudwatch-agent-config.json /opt/aws/amazon-cloudwatch-agent/etc/cloudwatch-agent-config.json",
       "sudo systemctl enable amazon-cloudwatch-agent",
       "sudo systemctl start amazon-cloudwatch-agent",
       "sudo chown -R ec2-user:ec2-user /opt/webapp",
+      "sudo chmod -R 750 /opt/webapp/*",
     ]
   }
 
