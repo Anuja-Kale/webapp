@@ -5,3 +5,4 @@ const statsd = new StatsD({
     prefix: 'yourapp.',
     globalTags: { environment: process.env.NODE_ENV } // Optional global tags
 });
+module.exports = statsd;
