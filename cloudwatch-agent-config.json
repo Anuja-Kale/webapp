@@ -1,7 +1,7 @@
 {
   "agent": {
     "metrics_collection_interval": 60,
-    "run_as_user": "cwagent"
+    "run_as_user": "ec2-user"
   },
   "metrics": {
     "append_dimensions": {
@@ -35,7 +35,7 @@
           {
             "file_path": "/opt/webapp/application.log",
             "log_group_name": "application-log-group",
-            "log_stream_name": "{instance_id}/application.log",
+            "log_stream_name": "my_log_stream_name",
             "timezone": "Local"
           }
         ]
