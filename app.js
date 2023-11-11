@@ -60,7 +60,7 @@ app.put('/api/assignment/:id', basicAuth, (req, res, next) => {
 
 app.get('/healthz', async (req, res) => {
   try {
-    StatsDD.increment('api.request.count');
+    await StatsDD.increment('endpoint.hit.v1.healthZ.Check');
     console.log('healthz')
     await sequelize.authenticate(); // Check the database connectivity
     logger.info("Connected to DB")
