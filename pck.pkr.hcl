@@ -48,13 +48,27 @@ source "amazon-ebs" "webapp" {
 build {
   sources = ["source.amazon-ebs.webapp"]
 
-  provisioner "file" {
-    source      = "cloudwatch-agent-config.json"
-    destination = "/opt/webapp/cloudwatch-agent-config.json"
+  provisioner "shell" {
+    inline = [
+      "sudo mkdir -p /tmp/webapp && sudo chown admin:admin /tmp/webapp"
+    ]
   }
 
   provisioner "shell" {
-    script = "script.sh"
+    inline = [
+      "ls -ld /tmp/webapp",
+      "id"
+    ]
+  }
+
+  provisioner "file" {
+    source      = "./"
+    destination = "/tmp/webapp"
+    direction   = "upload"
+  }
+
+  provisioner "shell" {
+    script = "./script.sh"
   }
 
   provisioner "shell" {
@@ -62,20 +76,42 @@ build {
       "sudo apt-get update -y",
       "sudo apt -y install nodejs npm mariadb-server mariadb-client",
       "sudo mkdir -p /opt/webapp",
-      "sudo chown admin:admin /opt/webapp",
-      "cd /opt/webapp",
-      "sudo npm install",
+      "sudo mv /tmp/webapp/* /opt/webapp/",
+      "cd /opt/webapp/",
+      "sudo apt-get install acl",
+      "sudo npm i",
+      "sudo adduser ec2-user",
+      "sudo usermod -aG ec2-user ec2-user",
+      "sudo chmod +x /opt/webapp/server.js",
+      "sudo mv /opt/webapp/rds.service /etc/systemd/system/",
+      "sudo systemctl daemon-reload",
+      "sudo systemctl enable rds",
+    ]
+  }
+
+  // Install CloudWatch Agent
+  provisioner "shell" {
+    inline = [
+      #"curl -O https://s3.amazonaws.com/amazoncloudwatch-agent/debian/amd64/latest/amazon-cloudwatch-agent.deb",
+      #"sudo dpkg -i -E ./amazon-cloudwatch-agent.deb"
       "sudo wget https://s3.amazonaws.com/amazoncloudwatch-agent/debian/amd64/latest/amazon-cloudwatch-agent.deb",
       "sudo dpkg -i -E ./amazon-cloudwatch-agent.deb",
-      "sudo mv /opt/webapp/cloudwatch-agent-config.json /opt/aws/amazon-cloudwatch-agent/etc/cloudwatch-agent-config.json",
-      "sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/opt/aws/amazon-cloudwatch-agent/etc/cloudwatch-agent-config.json -s",
+    ]
+  }
+
+  # provisioner "file" {
+  #   source      = "cloudwatch-agent-config.json"
+  #   destination = "/tmp/webapp/cloudwatch-agent-config.json"
+  # }
+
+
+  provisioner "shell" {
+    inline = [
+      # "sudo mv /tmp/webapp/cloudwatch-agent-config.json /opt/aws/amazon-cloudwatch-agent/etc/",/opt/aws/amazon-cloudwatch-agent/etc/cloudwatch-agent-config.json
+      "sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/opt/webapp/cloudwatch-agent-config.json -s",
       "sudo systemctl enable amazon-cloudwatch-agent",
       "sudo systemctl start amazon-cloudwatch-agent",
-      "sudo usermod -aG sudo ec2-user",
-      "echo 'ec2-user:ec2-user' | sudo chpasswd",
-      "sudo setfacl -Rm u:ec2-user:rwx /opt/webapp",
-      "sudo systemctl daemon-reload",
-      "sudo systemctl enable webapp",
+      "sudo chown -R ec2-user:ec2-user /opt/webapp",
       "sudo chmod -R 750 /opt/webapp/*"
     ]
   }
@@ -83,7 +119,14 @@ build {
   provisioner "shell" {
     inline = [
       "export DEBIAN_FRONTEND=noninteractive",
-      "sudo apt-get clean",
+      "sudo apt-get update",
+      "sudo apt-get install -y mariadb-server mariadb-client"
+    ]
+  }
+
+  provisioner "shell" {
+    inline = [
+      "sudo apt clean",
       "sudo rm -rf /var/lib/apt/lists/*"
     ]
   }
@@ -93,3 +136,4 @@ build {
     strip_path = true
   }
 }
+
