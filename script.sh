@@ -23,9 +23,9 @@ npm install aws-sdk
 # Initialize the web application database (if required)
 mysql -u root -proot1234 -e "CREATE DATABASE IF NOT EXISTS webappdb;"
 
-# Install the CloudWatch Agent
-wget https://s3.amazonaws.com/amazoncloudwatch-agent/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb
-sudo dpkg -i -E ./amazon-cloudwatch-agent.deb
+# # Install the CloudWatch Agent
+# wget https://s3.amazonaws.com/amazoncloudwatch-agent/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb
+# sudo dpkg -i -E ./amazon-cloudwatch-agent.deb
 
 # Create a directory for application logs
 sudo mkdir -p /var/log/myapp
