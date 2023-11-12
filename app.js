@@ -26,6 +26,7 @@ app.use((err, req, res, next) => {
     res.status(500).json({ error: 'Internal Server Error' });
 });
 
+
 // Create an assignment
 app.post('/api/assignment', basicAuth, async (req, res, next) => {
   statsd.increment('api.request.createAssignment');
@@ -40,17 +41,36 @@ app.post('/api/assignment', basicAuth, async (req, res, next) => {
   }
 });
 
-// Get a specific assignment or all assignments
-app.get('/api/assignment/:id?', basicAuth, async (req, res, next) => {
-  statsd.increment('api.request.getAssignment');
+app.get('/api/assignment', basicAuth, async (req, res) => {
   try {
-    // Your logic to get assignment(s)...
+    // Assuming you have a findAll method on your Assignment model
+    const assignments = await Assignment.findAll();
     logger.info("Assignments retrieved successfully");
-    res.status(200).json({ assignments: 'Your assignments data' });
+    res.status(200).json(assignments);
   } catch (error) {
     console.error('Error getting assignments:', error);
     logger.error("Error getting assignments");
     res.status(500).json({ error: 'Error getting assignments' });
+  }
+});
+
+app.get('/api/assignment/:id', basicAuth, async (req, res) => {
+  const { id } = req.params;
+  
+  try {
+    // Assuming you have a findByPk or similar method on your Assignment model
+    const assignment = await Assignment.findByPk(id);
+    if (!assignment) {
+      logger.info("Assignment not found");
+      return res.status(404).json({ error: 'Assignment not found' });
+    }
+
+    logger.info("Assignment retrieved successfully");
+    res.status(200).json(assignment);
+  } catch (error) {
+    console.error('Error getting the assignment:', error);
+    logger.error("Error getting the assignment");
+    res.status(500).json({ error: 'Error getting the assignment' });
   }
 });
 
@@ -61,13 +81,14 @@ app.delete('/api/assignment/:id', basicAuth, async (req, res, next) => {
   try {
     // Your logic to delete an assignment...
     logger.info("Assignment deleted successfully");
-    res.status(204).send();
+    return res.status(204).send(); // No content to send back for a delete operation
   } catch (error) {
     console.error('Error deleting assignment:', error);
     logger.error("Error deleting assignment");
-    res.status(500).json({ error: 'Error deleting assignment' });
+    return res.status(500).json({ error: 'Error deleting assignment' });
   }
 });
+
 
 // Update an assignment
 app.put('/api/assignment/:id', basicAuth, async (req, res, next) => {
@@ -75,13 +96,14 @@ app.put('/api/assignment/:id', basicAuth, async (req, res, next) => {
   try {
     // Your logic to update an assignment...
     logger.info("Assignment updated successfully");
-    res.status(200).json({ message: 'Assignment updated' });
+    return res.status(200).json({ message: 'Assignment updated' });
   } catch (error) {
     console.error('Error updating assignment:', error);
     logger.error("Error updating assignment");
-    res.status(500).json({ error: 'Error updating assignment' });
+    return res.status(500).json({ error: 'Error updating assignment' });
   }
 });
+
 
 app.get('/healthz', async (req, res) => {
   try {
