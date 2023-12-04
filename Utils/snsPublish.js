@@ -1,36 +1,29 @@
 const AWS = require('aws-sdk');
-
-// Configure AWS to use promise
-AWS.config.setPromisesDependency(Promise);
-
-const sns = new AWS.SNS({
-  region: 'us-east-1', // e.g., us-east-1
-  // other configuration parameters
-});
-
-/**
- * Publishes a message to an SNS topic.
- * @param {string} message - The message to publish.
- * @param {string} TopicArn - The ARN of the SNS topic.
- * @returns {Promise<AWS.SNS.PublishResponse>}
- */
-const publishToTopic = async (message, TopicArn) => {
+AWS.config.update({ region: 'us-east-1' }); // replace YOUR_REGION with your region
+const sns = new AWS.SNS({ apiVersion: '2010-03-31' });
+ 
+const publish = async (message, subject, TopicArn) => {
+  console.log(`Publishing message to SNS: ${message}`);
+  console.log(`Message type: ${typeof message}`);
+  console.log(`Subject: ${subject}`);
+  console.log(`Subject type: ${typeof subject}`);
+  console.log(`TopicArn: ${TopicArn}`);
+  console.log(`TopicArn type: ${typeof TopicArn}`);
+ 
   const params = {
     Message: message,
-    TopicArn,
+    Subject: subject,
+    TopicArn: TopicArn,
   };
-
+ 
   try {
     const publishTextPromise = await sns.publish(params).promise();
-    console.log(`Message ${params.Message} sent to the topic ${params.TopicArn}`);
-    console.log("MessageID is " + publishTextPromise.MessageId);
+    console.log(`MessageID is ${publishTextPromise.MessageId}`);
     return publishTextPromise;
-  } catch (error) {
-    console.error(`Error publishing to SNS topic: ${error.message}`);
-    throw error;
+  } catch (err) {
+    console.error(err, err.stack);
+    throw err;
   }
 };
-
-module.exports = {
-  publishToTopic,
-};
+ 
+module.exports = { publish };

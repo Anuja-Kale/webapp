@@ -1,9 +1,11 @@
 const AWS = require('aws-sdk');
 const Assignment = require('../Models/assignment');
+const awsSnsPublisher = require('../Utils/snsPublish');
 // const Submission = require('../Models/submission'); // Ensure you have this model created
 AWS.config.update({ region: 'us-east-1' }); // Update with your AWS region
 const snsClient = new AWS.SNS();
 const submission1 = require('../Models/submission');
+require('dotenv').config();
 
 
 
@@ -33,6 +35,9 @@ const submitAssignment = async (req, res) => {
       defaults: { attempts: 0 } // Default attempts to 0 if a new record is created
     });
 
+    console.log('submitted done')
+    console.log(process.env.SNS_ARN)
+
     // Check if the user has already exceeded their retry limit
     if (submission.attempts >= assignment.retries) {
       return res.status(400).json({ error: 'Retry limit exceeded' });
@@ -42,19 +47,21 @@ const submitAssignment = async (req, res) => {
     submission.attempts += 1;
     await submission.save();
 
+    const message =  JSON.stringify({
+      userId: userId,
+      assignmentId: assignmentId,
+      submissionId: submission.id, // If you have an ID for the submission
+      // Include any other relevant data you want to send to the SNS topic
+    });
     // Publish to SNS topic
-    const snsParams = {
-      Message: JSON.stringify({
-        userId: userId,
-        assignmentId: assignmentId,
-        submissionId: submission.id, // If you have an ID for the submission
-        // Include any other relevant data you want to send to the SNS topic
-      }),
-      TopicArn: process.env.SNS_TOPIC_ARN // The ARN of your SNS topic
-    };
 
     try {
-      await snsClient.publish(snsParams).promise();
+      await awsSnsPublisher.publish(
+          message,
+          'Test Subject',
+          process.env.SNS_ARN
+         // The ARN of your SNS topic
+      );
       console.log('Submission notification sent to SNS topic');
     } catch (snsError) {
       console.error('Error sending submission notification to SNS topic:', snsError);
