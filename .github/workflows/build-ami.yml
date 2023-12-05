@@ -22,7 +22,7 @@ jobs:
 
       - name: Initialize Packer
         run: |
-          packer init packer.pkr.hcl    
+          packer init pck.pkr.hcl    
 
       - name: Build AMI with Packer
         env:
@@ -30,7 +30,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
-          packer build packer.pkr.hcl
+          packer build pck.pkr.hcl
 
       # Fetching generated AMI ID from above Packer Build
       - name: Fetching generated AMI ID
